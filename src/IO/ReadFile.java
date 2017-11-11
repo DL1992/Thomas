@@ -1,4 +1,4 @@
-package algorithms;
+package IO;
 
 public class ReadFile {
 }
