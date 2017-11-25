@@ -50,7 +50,7 @@ public class ReadFile {
         return stopWordsSet;
     }
 
-    //Noneses - just trying things out
+
     public void createDocs(String path) {
         Scanner reader = null;
         String docName = null;
@@ -64,22 +64,22 @@ public class ReadFile {
                     docName = line.substring(line.indexOf(" ") + 1, line.lastIndexOf(" "));
                     docLength = 0;
                 } else if (line.contains("<TEXT>")) {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sbDocContent = new StringBuilder();
                     while (reader.hasNextLine() && !line.contains("</TEXT>")) {
                         line = reader.nextLine().trim().replaceAll("\\s+", " ");
-                        if (line.matches("")) {
+                        if (line.matches("") || line.contains("</TEXT>")) { //Skips empty line and end of text.
                             continue;
                         }
                         //TODO: remove if's and printing. also num=... should be removed and replace in docLength=
                         if (docName.equals("FBIS3-47"))
                             System.out.print(line + " ");
-                        sb.append(line);
+                        sbDocContent.append(line);
                         int num = line.split(" ").length;
                         if (docName.equals("FBIS3-47"))
                             System.out.println(num);
                         docLength += num;
                     }
-                    Doc doc = new Doc(docLength - 1, docName, sb.toString());
+                    Doc doc = new Doc(docLength, docName, sbDocContent.toString());
                     docList.add(doc);
 //                    break;
                 }
