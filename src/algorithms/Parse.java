@@ -4,13 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Parse implements Parser {
-
-    Map<String, String> months;
+    private Pattern clearSpacesPattern;
+    private Pattern clearJunkPattern;
+    private Pattern normalNumberPattern;
+    private Pattern decimalPattern;
+    private Pattern fractionPattern;
+    private Pattern capitalLetterPattern;
+    private Map<String, String> months;
 
     public Parse() {
         this.months = initMonths();
+        clearSpacesPattern = Pattern.compile("\\s+");
+        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/\"]");
+        normalNumberPattern = Pattern.compile("\\d+");
+        decimalPattern = Pattern.compile("\\d+\\.\\d+");
+        fractionPattern = Pattern.compile("\\d+/\\d+");
+        capitalLetterPattern = Pattern.compile(".*[A-Z].*");
     }
 
     private Map<String, String> initMonths() {
@@ -44,201 +56,145 @@ public class Parse implements Parser {
     @Override
     public List<String> parse(String st) {
         List<String> tokenList = new ArrayList<>();
-        String[] splitString = st.replaceAll("[^%.\\w\\s/\"]", "").split(" ");
+        st = clearSpacesPattern.matcher(st).replaceAll(" ");
+        String[] splitString = clearJunkPattern.matcher(st).replaceAll("").split(" ");
         for (int i = 0; i < splitString.length; i++) {
-//            System.out.print(splitString[i] + " ");
             String stToParse = splitString[i];
-            if (stToParse.matches(".*\\d.*")) {
-                if (parseFraction(tokenList, stToParse)) {
-                    continue;
+            if (Character.isDigit(st.charAt(0))) {
+                if (stToParse.endsWith("th") || stToParse.endsWith("st") || stToParse.endsWith("nd") || stToParse.endsWith("rd"))
+                    stToParse = stToParse.substring(0, stToParse.length() - 2);
+                switch (tokenType(stToParse)) {
+                    case 0:// normal number
+                        if (tryParsePercent(splitString, i)) {
+                            tokenList.add(stToParse + " percent");
+                            i++;
+                        }
+                        else {
+                            if (stToParse.length() <= 2 && i + 1 < splitString.length && Integer.parseInt(stToParse) <= 31 && Integer.parseInt(stToParse) > 0) {
+                                if (months.containsKey(splitString[i + 1].toLowerCase())) {
+                                    i++;
+                                    if (stToParse.length() == 1) {
+                                        stToParse = "0" + stToParse;
+                                    }
+                                    if (i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
+                                        if (splitString[i+1].length() == 4) {
+                                            i++;
+                                            tokenList.add(String.format("%s/%s/%s", stToParse, months.get(splitString[i - 1].toLowerCase()), splitString[i]));
+                                        }
+                                        else if (splitString[i+1].length() == 2) {
+                                            i++;
+                                            tokenList.add(String.format("%s/%s/%s", stToParse, months.get(splitString[i - 1].toLowerCase()), "19" + splitString[i]));
+                                        }
+                                        else{
+                                            tokenList.add(String.format("%s/%s", stToParse, months.get(splitString[i].toLowerCase())));
+                                        }
+                                    } else {
+                                        tokenList.add(String.format("%s/%s", stToParse, months.get(splitString[i].toLowerCase())));
+                                    }
+                                }
+                                else {
+                                    tokenList.add(stToParse);
+                                }
+                            } else {
+                                tokenList.add(stToParse);
+                            }
+                        }
+                        break;
+                    case 1://digits.digits
+                        if (tryParsePercent(splitString, i)) {
+                            tokenList.add(stToParse.substring(0, Math.min(stToParse.indexOf(".") + 3, stToParse.length())) + " percent");
+                            i++;
+                        } else {
+                            tokenList.add(stToParse.substring(0, Math.min(stToParse.indexOf(".") + 3, stToParse.length())));
+                        }
+                        break;
+                    case 2:// digits/digits
+                        String[] d = stToParse.split("/");
+                        tokenList.add(String.format("%.2f", Double.parseDouble(d[0]) / Double.parseDouble(d[1])));
+                        break;
+                    case 3: //end in %
+                        String checkString = stToParse.substring(0, stToParse.length() - 1);
+                        if (tokenType(checkString) == 1) {
+                            tokenList.add(checkString.substring(0, Math.max(checkString.indexOf(".") + 2, checkString.length())) + " percent");
+                        } else {
+                            tokenList.add(checkString + " percent");
+                        }
+                        break;
+                    default: //junk
+                        tokenList.add(stToParse);
+                        break;
                 }
-                if (parseDateFormatA(tokenList, splitString, i)) {
-                    i += 2;
-                    continue;
-                }
-                if (parseDateFormatB(tokenList, splitString, i)) {
-                    i++;
-                    continue;
-                }
-                stToParse = parseDecimalPoint(stToParse);
-                if (parsePrecentSingel(tokenList, stToParse))
-                    continue;
-                if (i + 1 != splitString.length)
-                    if (parsePrecent(tokenList, stToParse, splitString[i + 1])) {
+            } else {//Here if the string doesnt conatin a number
+                if(capitalLetterPattern.matcher(stToParse).matches()){
+                    if(i+1 < splitString.length && capitalLetterPattern.matcher(splitString[i+1]).matches()){
+                        tokenList.add(stToParse.toLowerCase());
+                        tokenList.add(splitString[i+1].toLowerCase());
+                        tokenList.add(stToParse.toLowerCase()+ " " + splitString[i+1].toLowerCase());
                         i++;
                         continue;
                     }
-                tokenList.add(stToParse);
-                continue;
-            } else { //Here if the string doesnt conatin a number
-                if (parseDateFormatC(tokenList, splitString, i)) {
-                    i += 2;
-                    continue;
                 }
-                if (parseDateFormatD(tokenList, splitString, i)) {
-                    i++;
-                    continue;
-                }
-                if (stToParse.matches(".*[A-Z].*")) {
-                    String largeToken = "";
-                    while (i != splitString.length) {
-                        if (splitString[i].matches(".*[A-Z].*")) {
-                            largeToken += splitString[i] + " ";
-                            tokenList.add(splitString[i].toLowerCase());
+                if(months.containsKey(stToParse.toLowerCase())){
+                    if(i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0){
+                        if (splitString[i+1].length() == 4) {
                             i++;
-                        } else {
-                            if (largeToken.split(" ").length > 1)
-                                tokenList.add(largeToken.toLowerCase());
-                            break;
+                            tokenList.add(String.format("%s/%s",months.get(splitString[i - 1].toLowerCase()), splitString[i]));
+                        }
+                        else if (i + 1 < splitString.length && splitString[i+1].length() <= 2 && Integer.parseInt(splitString[i+1]) <= 31 && Integer.parseInt(splitString[i+1]) > 0) {
+                            i++;
+                            String fullDay=splitString[i];
+                            if (fullDay.length() == 1) {
+                                fullDay = "0" + splitString[i+1];
+                            }
+                            if(i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
+                                if (splitString[i + 1].length() == 4) {
+                                    i++;
+                                    tokenList.add(String.format("%s/%s/%s", fullDay, months.get(stToParse.toLowerCase()), splitString[i]));
+                                }
+                                else{
+                                    tokenList.add(String.format("%s/%s",fullDay,months.get(stToParse.toLowerCase())));
+                                }
+                            }
+                            else{
+                                tokenList.add(String.format("%s/%s",fullDay,months.get(stToParse.toLowerCase())));
+                            }
+                        }
+                        else{
+                            tokenList.add(stToParse.toLowerCase());
                         }
                     }
-                    if (i != splitString.length) {
-                        i--;
-//                        tokenList.add(splitString[i]);
-                        continue;
-                    } else {
-                        tokenList.add(largeToken.toLowerCase());
-                        continue;
+                    else{
+                        tokenList.add(stToParse.toLowerCase());
                     }
-                } else {
-                    tokenList.add(stToParse);
                 }
-
+                else{
+                    tokenList.add(stToParse.toLowerCase());
+                }
             } // end of else (not a number and checked for words)
         }
         return tokenList;
     }
 
-    private boolean parseDateFormatD(List<String> tokenList, String[] splitString, int i) {
-        String dateToken;
-        if (months.containsKey(splitString[i].toLowerCase())) {
-            if (i + 1 != splitString.length) {
-                if (splitString[i + 1].matches("\\d+")) {
-                    int dayOfDate = Integer.parseInt(splitString[i + 1].replaceAll("[^\\d]", ""));
-                    if (dayOfDate > 1 && dayOfDate < 31) {
-                        dateToken = String.format("%02d", dayOfDate) + "/" + months.get(splitString[i].toLowerCase());
-                    } else {
-                        dateToken = months.get(splitString[i].toLowerCase()) + "/" + dayOfDate;
-                    }
-                    tokenList.add(dateToken);
-                    return true;
-                }
+    private boolean tryParsePercent(String[] splitString, int i) {
+        if (i + 1 < splitString.length) {
+            if (splitString[i + 1].equals("percent") || splitString[i + 1].equals("percentage")) {
+                return true;
             }
         }
         return false;
     }
 
-    private boolean parseDateFormatC(List<String> tokenList, String[] splitString, int i) {
-        String dateToken;
-        if (!months.containsKey(splitString[i].toLowerCase()))
-            return false;
-        if (i + 1 != splitString.length) {
-            if (splitString[i + 1].matches("\\d+")) {
-                int dayOfDate = Integer.parseInt(splitString[i + 1].replaceAll("[^\\d]", ""));
-                if (dayOfDate < 1 || dayOfDate > 31) {
-                    return false;
-                }
-                dateToken = String.format("%02d", dayOfDate) + "/" + months.get(splitString[i].toLowerCase());
-                if (i + 2 != splitString.length) {
-                    if (splitString[i + 2].matches(".*\\d.*")) {
-                        dateToken += "/" + splitString[i + 2];
-                        tokenList.add(dateToken);
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
+    private int tokenType(String stToParse) {
+        if(normalNumberPattern.matcher(stToParse).matches())
+            return 0;
+        if(decimalPattern.matcher(stToParse).matches())
+            return 1;
+        if (fractionPattern.matcher(stToParse).matches())
+            return 2;
+        if(stToParse.endsWith("%"))
+            return 3;
+        return 4;
     }
-
-    private boolean parseDateFormatB(List<String> tokenList, String[] splitString, int i) {
-        String dateToParse = parseDateHelper(splitString, i);
-        if (null != dateToParse) {
-            tokenList.add(dateToParse);
-            return true;
-        }
-        return false;
-    }
-
-    private String parseDateHelper(String[] splitString, int i) {
-        String dateToken;
-//        System.out.println(splitString[i]);
-//        System.out.println(splitString[i].replaceAll("[^\\d]", ""));
-        Long dayOfDate = Long.parseLong(splitString[i].replaceAll("[^\\d]", ""));
-        if (dayOfDate < 1 || dayOfDate > 31) {
-            return null;
-        }
-        dateToken = String.format("%02d", dayOfDate);
-        if (i + 1 != splitString.length) {
-            i++;
-            if (months.containsKey(splitString[i].toLowerCase())) {
-                dateToken = dateToken + "/" + months.get(splitString[i].toLowerCase());
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-        return dateToken;
-    }
-
-    private boolean parsePrecentSingel(List<String> tokenList, String stToParse) {
-        if (stToParse.endsWith("%")) {
-            tokenList.add(stToParse.replace("%", "") + " percent");
-            return true;
-        }
-        return false;
-    }
-
-    private boolean parseDateFormatA(List<String> tokenList, String[] splitString, int i) {
-        String dateToken = parseDateHelper(splitString, i);
-        if (null == dateToken)
-            return false;
-        if (i + 2 != splitString.length) {
-            i += 2;
-            if (splitString[i].matches(".*\\d.*")) {
-                if (splitString[i].length() == 2) {
-                    dateToken += "/19" + splitString[i];
-                } else {
-                    dateToken += "/" + splitString[i];
-                }
-            } else {
-                return false;
-            }
-            tokenList.add(dateToken);
-            return true;
-        } else
-            return false;
-    }
-
-    private boolean parseFraction(List<String> tokenList, String stToParse) {
-        if (stToParse.matches("\\d+/\\d+")) {
-            String[] d = stToParse.split("/");
-            tokenList.add(String.format("%.2f", Double.parseDouble(d[0]) / Double.parseDouble(d[1])));
-            return true;
-        }
-        return false;
-    }
-
-    private String parseDecimalPoint(String stToParse) {
-        if (stToParse.contains(".")) {
-            Double number = Double.parseDouble(stToParse.replaceAll("[^\\d]", ""));
-            if (stToParse.contains("%"))
-                stToParse = String.format("%.02f", number) + "%";
-        }
-        return stToParse;
-    }
-
-    private boolean parsePrecent(List<String> tokenList, String stToParse, String stNextParse) {
-        if (stNextParse.equals("percent") || stNextParse.equals("percentage")) {
-            tokenList.add(stToParse + " percent");
-            return true;
-        }
-        return false;
-    }
-
 
 //    public IndexHelper parse(Doc docToParse) {
 //        return new IndexHelper(docToParse, parse(docToParse.getContent()));

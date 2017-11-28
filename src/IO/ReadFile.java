@@ -100,8 +100,8 @@ public class ReadFile {
                     docName+=line.charAt(i);
                     i++;
                 }
-                return docName;
             }
+            return docName;
         }
         return "";
     }
@@ -118,7 +118,7 @@ public class ReadFile {
                 File[] insideFile = file.listFiles();
                 docList.add(createDocs(insideFile[0].getCanonicalPath()));
             }
-            System.out.println("I WON");
+            System.out.println("done reading " + System.currentTimeMillis() );
         } catch (IOException e) {
             e.printStackTrace();
         }
