@@ -61,26 +61,29 @@ public class ReadFile {
                 String line = reader.nextLine();
                 if (line.contains("<DOC>")) {
                     line = reader.nextLine();
-                    docName = line.substring(line.indexOf(" ") + 1, line.lastIndexOf(" "));
+                    if (line.contains(" "))
+                        docName = line.substring(line.indexOf(" ") + 1, line.lastIndexOf(" "));
+                    else
+                        docName = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<"));
                     docLength = 0;
                 } else if (line.contains("<TEXT>")) {
                     StringBuilder sbDocContent = new StringBuilder();
                     while (reader.hasNextLine() && !line.contains("</TEXT>")) {
-                        line = reader.nextLine().trim().replaceAll("\\s+", " ");
-                        if (line.matches("") || line.contains("</TEXT>")) { //Skips empty line and end of text.
-                            continue;
-                        }
+                        line = reader.nextLine()/*.trim().replaceAll("\\s+", " ")*/;
+//                        if (line.matches("") || line.contains("</TEXT>")) { //Skips empty line and end of text.
+//                            continue;
+//                        }
                         //TODO: remove if's and printing. also num=... should be removed and replace in docLength=
-                        if (docName.equals("FBIS3-47"))
-                            System.out.print(line + " ");
+//                        if (docName.equals("FBIS3-47"))
+//                            System.out.print(line + " ");
                         sbDocContent.append(line);
-                        int num = line.split(" ").length;
-                        if (docName.equals("FBIS3-47"))
-                            System.out.println(num);
-                        docLength += num;
+//                        int num = line.split(" ").length;
+//                        if (docName.equals("FBIS3-47"))
+//                            System.out.println(num);
+//                        docLength += num;
                     }
-                    Doc doc = new Doc(docLength, docName, sbDocContent.toString());
-                    docList.add(doc);
+//                    Doc doc = new Doc(docLength, docName, sbDocContent.toString());
+//                    docList.add(doc);
 //                    break;
                 }
             }
@@ -102,9 +105,9 @@ public class ReadFile {
             File[] files = dir.listFiles();
             for (File file : files) {
                 if (file.isDirectory()) {
-                    System.out.println("directory " + file.getCanonicalPath());
+//                    System.out.println("directory " + file.getCanonicalPath());
                     readFiles(file);
-                    break; //Don't belong here!!!
+//                    break; //Don't belong here!!!
                 } else {
                     System.out.println("file:" + file.getName());
                     createDocs(file.getCanonicalPath());
