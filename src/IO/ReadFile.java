@@ -6,13 +6,13 @@ import java.io.*;
 import java.util.*;
 
 public class ReadFile {
-    private List<Doc> docList;
+    private List<List<Doc>> docList;
 
     public ReadFile() {
         this.docList = new ArrayList<>();
     }
 
-    public List<Doc> getDocList() {
+    public List<List<Doc>> getDocList() {
         return docList;
     }
 
@@ -48,7 +48,8 @@ public class ReadFile {
     }
 
 
-    public void createDocs(String path) throws IOException {
+    public List<Doc> createDocs(String path) throws IOException {
+        List<Doc> docList = new ArrayList<>();
         BufferedReader reader = null;
         String docName = null;
         String docContent = null;
@@ -66,7 +67,8 @@ public class ReadFile {
                         docContentList.add(line);
                     }
                     docContent = joinString(docContentList);
-//                    Doc doc = new Doc(docName, docContent);
+                    Doc doc = new Doc(docName, docContent);
+                    docList.add(doc);
 //                    System.out.println(doc.toString());
                 }
             }
@@ -78,6 +80,7 @@ public class ReadFile {
             if (null != reader)
                 reader.close();
         }
+        return docList;
     }
 
     private String joinString(List<String> docContentList) {
@@ -113,8 +116,9 @@ public class ReadFile {
             File[] files = dir.listFiles();
             for (File file : files) {
                 File[] insideFile = file.listFiles();
-                createDocs(insideFile[0].getCanonicalPath());
+                docList.add(createDocs(insideFile[0].getCanonicalPath()));
             }
+            System.out.println("I WON");
         } catch (IOException e) {
             e.printStackTrace();
         }
