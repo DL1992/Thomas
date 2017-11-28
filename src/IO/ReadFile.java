@@ -52,47 +52,44 @@ public class ReadFile {
 
 
     public void createDocs(String path) {
-        Scanner reader = null;
         String docName = null;
-        int docLength = 0;
+        List<String> docContentList;
         try {
-            reader = new Scanner(new BufferedReader(new FileReader(path)));
-            while (reader.hasNextLine()) {
-                String line = reader.nextLine();
+            BufferedReader reader = new BufferedReader(new FileReader(path)));
+            String line;
+            while (null != (line=reader.readLine())) {
                 if (line.contains("<DOC>")) {
-                    line = reader.nextLine();
-                    if (line.contains(" "))
-                        docName = line.substring(line.indexOf(" ") + 1, line.lastIndexOf(" "));
-                    else
-                        docName = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<"));
-                    docLength = 0;
+                    line = reader.readLine();
+                    docName = findName(line);
+                    docContentList = new ArrayList<>();
                 } else if (line.contains("<TEXT>")) {
-                    StringBuilder sbDocContent = new StringBuilder();
-                    while (reader.hasNextLine() && !line.contains("</TEXT>")) {
-                        line = reader.nextLine()/*.trim().replaceAll("\\s+", " ")*/;
-//                        if (line.matches("") || line.contains("</TEXT>")) { //Skips empty line and end of text.
-//                            continue;
-//                        }
-                        //TODO: remove if's and printing. also num=... should be removed and replace in docLength=
-//                        if (docName.equals("FBIS3-47"))
-//                            System.out.print(line + " ");
-                        sbDocContent.append(line);
-//                        int num = line.split(" ").length;
-//                        if (docName.equals("FBIS3-47"))
-//                            System.out.println(num);
-//                        docLength += num;
+                    while((null != (line=reader.readLine())) && !line.contains("</TEXT>")) {
+                        docContentList.add(line);
                     }
-//                    Doc doc = new Doc(docLength, docName, sbDocContent.toString());
-//                    docList.add(doc);
-//                    break;
+
                 }
             }
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (null != reader)
                 reader.close();
         }
+    }
+
+    private String findName(String line) {
+        String docName = "";
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i)=='>'){
+                while(line.charAt(i) != '<'){
+                    docName+=line.charAt(i);
+                    i++;
+                }
+            }
+        }
+        return docName;
     }
 
     /**
@@ -104,14 +101,8 @@ public class ReadFile {
         try {
             File[] files = dir.listFiles();
             for (File file : files) {
-                if (file.isDirectory()) {
-//                    System.out.println("directory " + file.getCanonicalPath());
-                    readFiles(file);
-//                    break; //Don't belong here!!!
-                } else {
-                    System.out.println("file:" + file.getName());
-                    createDocs(file.getCanonicalPath());
-                }
+                File[] insideFile = file.listFiles();
+                createDocs(insideFile[0].getCanonicalPath());
             }
         } catch (IOException e) {
             e.printStackTrace();
