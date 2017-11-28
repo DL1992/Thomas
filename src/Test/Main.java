@@ -8,6 +8,9 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
+//        long hz= Runtime.getRuntime().totalMemory();
+//        System.out.println(hz);
+
         long startTime = System.currentTimeMillis();
         ReadFile read = new ReadFile();
         Parser parse = new Parse();
