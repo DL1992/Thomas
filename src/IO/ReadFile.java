@@ -66,6 +66,8 @@ public class ReadFile {
                         docContentList.add(line);
                     }
                     docContent = joinString(docContentList);
+//                    Doc doc = new Doc(docName, docContent);
+//                    System.out.println(doc.toString());
                 }
             }
         } catch (FileNotFoundException e) {
@@ -90,14 +92,15 @@ public class ReadFile {
         String docName = "";
         for (int i = 0; i < line.length(); i++) {
             if (line.charAt(i)=='>'){
-                while(line.charAt(i) != '<'){
+                i++;
+                while(line.charAt(i+1) != '<'){
                     docName+=line.charAt(i);
                     i++;
                 }
+                return docName;
             }
-            break;
         }
-        return docName;
+        return "";
     }
 
     /**

@@ -11,6 +11,11 @@ public class Doc {
         this.content = content;
     }
 
+    public Doc(String docName, String content) {
+        this.docName = docName;
+        this.content = content;
+    }
+
     public int getDocLength() {
         return docLength;
     }
