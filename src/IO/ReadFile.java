@@ -3,10 +3,7 @@ package IO;
 import algorithms.Doc;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ReadFile {
     private List<Doc> docList;
@@ -51,11 +48,13 @@ public class ReadFile {
     }
 
 
-    public void createDocs(String path) {
+    public void createDocs(String path) throws IOException {
+        BufferedReader reader = null;
         String docName = null;
-        List<String> docContentList;
+        String docContent = null;
+        List<String> docContentList = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(path)));
+            reader = new BufferedReader(new FileReader(path));
             String line;
             while (null != (line=reader.readLine())) {
                 if (line.contains("<DOC>")) {
@@ -66,7 +65,7 @@ public class ReadFile {
                     while((null != (line=reader.readLine())) && !line.contains("</TEXT>")) {
                         docContentList.add(line);
                     }
-
+                    docContent = joinString(docContentList);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -79,6 +78,14 @@ public class ReadFile {
         }
     }
 
+    private String joinString(List<String> docContentList) {
+        StringJoiner joinedStrings = new StringJoiner(" ");
+        for (String docLine : docContentList) {
+            joinedStrings.add(docLine);
+        }
+        return joinedStrings.toString();
+    }
+
     private String findName(String line) {
         String docName = "";
         for (int i = 0; i < line.length(); i++) {
@@ -88,6 +95,7 @@ public class ReadFile {
                     i++;
                 }
             }
+            break;
         }
         return docName;
     }

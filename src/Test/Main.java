@@ -13,7 +13,7 @@ public class Main {
         Parser parse = new Parse();
 //        String s = "bla bla bla 23/34 blac";
 ////        System.out.println("s,t,y".split(",").toString());
-        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus\\corpus"));
+        read.readFiles(new File("D:\\documents\\users\\sergayen\\FUN\\corpus"));
 //        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
 //        List<Doc> list = read.getDocList();
 //        for (Doc d :
