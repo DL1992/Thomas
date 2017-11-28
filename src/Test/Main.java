@@ -31,8 +31,9 @@ public class Main {
         for (List<Doc> docList : list) {
             for (Doc d: docList) {
                 List<String> tl = parse.parse(d.getContent());
+//                System.out.println("gf");
             }
-            break;
+//            break;
         }
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;

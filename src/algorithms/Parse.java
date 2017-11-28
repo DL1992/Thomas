@@ -144,7 +144,7 @@ public class Parse implements Parser {
                             i++;
                             String fullDay=splitString[i];
                             if (fullDay.length() == 1) {
-                                fullDay = "0" + splitString[i+1];
+                                fullDay = "0" + fullDay;
                             }
                             if(i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
                                 if (splitString[i + 1].length() == 4) {
