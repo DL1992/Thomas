@@ -56,11 +56,15 @@ public class Parse implements Parser {
     @Override
     public List<String> parse(String st) {
         List<String> tokenList = new ArrayList<>();
-        st = clearSpacesPattern.matcher(st).replaceAll(" ");
-        String[] splitString = clearJunkPattern.matcher(st).replaceAll("").split(" ");
+//        st = clearSpacesPattern.matcher(st).replaceAll(" ");
+//        String[] splitString = clearJunkPattern.matcher(st).replaceAll("").split(" ");
+        String[] splitString = st.split(" ");
+        splitString = cleanDots(splitString);
         for (int i = 0; i < splitString.length; i++) {
             String stToParse = splitString[i];
-            if (Character.isDigit(st.charAt(0))) {
+            if(stToParse.length()==0)
+                continue;
+            if (Character.isDigit(stToParse.charAt(0))) {
                 if (stToParse.endsWith("th") || stToParse.endsWith("st") || stToParse.endsWith("nd") || stToParse.endsWith("rd"))
                     stToParse = stToParse.substring(0, stToParse.length() - 2);
                 switch (tokenType(stToParse)) {
@@ -175,6 +179,15 @@ public class Parse implements Parser {
         return tokenList;
     }
 
+    private String[] cleanDots(String[] splitString) {
+        for (int i = 0; i < splitString.length; i++) {
+            if(splitString[i].endsWith(".")){
+                splitString[i]=splitString[i].substring(0,splitString[i].length());
+            }
+        }
+        return splitString;
+    }
+
     private boolean tryParsePercent(String[] splitString, int i) {
         if (i + 1 < splitString.length) {
             if (splitString[i + 1].equals("percent") || splitString[i + 1].equals("percentage")) {
@@ -196,7 +209,5 @@ public class Parse implements Parser {
         return 4;
     }
 
-//    public IndexHelper parse(Doc docToParse) {
-//        return new IndexHelper(docToParse, parse(docToParse.getContent()));
-//    }
+
 }

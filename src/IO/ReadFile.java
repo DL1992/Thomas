@@ -4,12 +4,28 @@ import algorithms.Doc;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ReadFile {
     private List<List<Doc>> docList;
+    private Pattern clearSpacesPattern;
+    private Pattern clearJunkPattern;
+    private int currFileNum;
+    private int batchSize;
+
+
 
     public ReadFile() {
         this.docList = new ArrayList<>();
+        clearSpacesPattern = Pattern.compile("\\s+");
+        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/\"]");
+        currFileNum=0;
+        batchSize=1;
+    }
+
+    public void setBatchSize(int batchSize) {
+        if(!(batchSize<0))
+            this.batchSize = batchSize;
     }
 
     public List<List<Doc>> getDocList() {
@@ -47,7 +63,6 @@ public class ReadFile {
         return stopWordsSet;
     }
 
-
     public List<Doc> createDocs(String path) throws IOException {
         List<Doc> docList = new ArrayList<>();
         BufferedReader reader = null;
@@ -67,9 +82,10 @@ public class ReadFile {
                         docContentList.add(line);
                     }
                     docContent = joinString(docContentList);
+                    docContent = clearSpacesPattern.matcher(docContent).replaceAll(" ");
+                    docContent = clearJunkPattern.matcher(docContent).replaceAll("");
                     Doc doc = new Doc(docName, docContent);
                     docList.add(doc);
-//                    System.out.println(doc.toString());
                 }
             }
         } catch (FileNotFoundException e) {
@@ -96,14 +112,14 @@ public class ReadFile {
         for (int i = 0; i < line.length(); i++) {
             if (line.charAt(i)=='>'){
                 i++;
-                while(line.charAt(i+1) != '<'){
+                while(line.charAt(i) != '<'){
                     docName+=line.charAt(i);
                     i++;
                 }
+                break;
             }
-            return docName;
         }
-        return "";
+        return docName;
     }
 
     /**
@@ -112,13 +128,19 @@ public class ReadFile {
      * @param dir is the main\home directory
      */
     public void readFiles(File dir) {
-        try {
-            File[] files = dir.listFiles();
-            for (File file : files) {
-                File[] insideFile = file.listFiles();
-                docList.add(createDocs(insideFile[0].getCanonicalPath()));
+        File[] files = dir.listFiles();
+        readFilesBatch(files, batchSize);
+    }
+
+    private void readFilesBatch(File[] files, int batchSize) {
+        try{
+            for (int i=0; i<batchSize ; i++) {
+                if(currFileNum<files.length){
+                    File[] insideFile = files[currFileNum].listFiles();
+                    docList.add(createDocs(insideFile[0].getCanonicalPath()));
+                    currFileNum++;
+                }
             }
-            System.out.println("done reading " + System.currentTimeMillis() );
         } catch (IOException e) {
             e.printStackTrace();
         }
