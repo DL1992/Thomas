@@ -3,7 +3,10 @@ package IO;
 import algorithms.Doc;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 public class ReadFile {
@@ -14,17 +17,16 @@ public class ReadFile {
     private int batchSize;
 
 
-
     public ReadFile() {
         this.docList = new ArrayList<>();
         clearSpacesPattern = Pattern.compile("\\s+");
         clearJunkPattern = Pattern.compile("[^-%.\\w\\s/\"]");
-        currFileNum=0;
-        batchSize=1;
+        currFileNum = 0;
+        batchSize = 1;
     }
 
     public void setBatchSize(int batchSize) {
-        if(!(batchSize<0))
+        if (!(batchSize < 0))
             this.batchSize = batchSize;
     }
 
@@ -72,13 +74,13 @@ public class ReadFile {
         try {
             reader = new BufferedReader(new FileReader(path));
             String line;
-            while (null != (line=reader.readLine())) {
+            while (null != (line = reader.readLine())) {
                 if (line.contains("<DOC>")) {
                     line = reader.readLine();
                     docName = findName(line);
                     docContentList = new ArrayList<>();
                 } else if (line.contains("<TEXT>")) {
-                    while((null != (line=reader.readLine())) && !line.contains("</TEXT>")) {
+                    while ((null != (line = reader.readLine())) && !line.contains("</TEXT>")) {
                         docContentList.add(line);
                     }
                     docContent = joinString(docContentList);
@@ -110,10 +112,10 @@ public class ReadFile {
     private String findName(String line) {
         String docName = "";
         for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i)=='>'){
+            if (line.charAt(i) == '>') {
                 i++;
-                while(line.charAt(i) != '<'){
-                    docName+=line.charAt(i);
+                while (line.charAt(i) != '<') {
+                    docName += line.charAt(i);
                     i++;
                 }
                 break;
@@ -133,9 +135,11 @@ public class ReadFile {
     }
 
     private void readFilesBatch(File[] files, int batchSize) {
-        try{
-            for (int i=0; i<batchSize ; i++) {
-                if(currFileNum<files.length){
+        if (currFileNum != 0)
+            docList.clear();
+        try {
+            for (int i = 0; i < batchSize; i++) {
+                if (currFileNum < files.length) {
                     File[] insideFile = files[currFileNum].listFiles();
                     docList.add(createDocs(insideFile[0].getCanonicalPath()));
                     currFileNum++;
