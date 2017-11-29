@@ -8,6 +8,7 @@ import algorithms.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,28 +23,30 @@ public class Main {
 
         long stopTime;
         long elapsedTime;
-
+        ArrayList<Integer> loc;
         long startTime = System.currentTimeMillis();
         ReadFile read = new ReadFile();
+
+        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\sergayen\\stop_words.txt");
         IndexParser parse = new IndexParser(new Parse());
-        read.setBatchSize(1815);
-        read.readFiles(new File("D:\\documents\\users\\laadan\\dorpus"));
+        read.setBatchSize(180);
+        read.readFiles(new File("D:\\documents\\users\\sergayen\\corpus"));
         List<List<Doc>> list = read.getDocList();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
-        ArrayList<Integer> loc;
+        System.out.println("Finished Reading Time: " + elapsedTime);
+
         for (List<Doc> docList : list) {
             for (Doc d: docList) {
                 parse.parse(d);
-
-//                for (int i = 0; i < d.getParseContent().size(); i++) {
-//                    loc = d.termInDocLoc(d.getParseContent().get(i));
-//                    for (int j:
-//                         loc) {
-////                        System.out.println(j);
+                List<String> listyTheDirtyList= d.getParseContent();
+//                int size = listyTheDirtyList.size();
+//                for (int i = 0; i < size; i++) {
+//                    String s = listyTheDirtyList.get(i);
+//                    if(!stopWords.contains(s)) {
+//                        loc = d.termInDocLoc(s);
 //                    }
-////                    System.out.println(String.format("the term %s, doc location:", d.getParseContent().get(i)));
+////                    System.out.println(String.format("the term %s, doc location: ", d.getParseContent().get(i)));
 //                }
 //                System.out.println(d);
 //                System.out.println("gf");
@@ -55,7 +58,7 @@ public class Main {
 //        System.out.println(tl.get(0));
          stopTime = System.currentTimeMillis();
          elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
+        System.out.println("Total Finish Time: " + elapsedTime);
     }
 }
 
