@@ -11,6 +11,7 @@ public class IndexParser{
         this.indexParser = indexParser;
         this.stemmer = null;
     }
+
     public IndexParser(Parser indexParser, Stemmer stemmer){
         this.indexParser = indexParser;
         this.stemmer = stemmer;
@@ -28,16 +29,13 @@ public class IndexParser{
     }
 
     public Doc parseWithStemmer(Doc docToParse){
-        if(null == stemmer) {
+        if(null == stemmer)
             return parse(docToParse);
-        }
         List<String> docParseContent= parse(docToParse.getContent());
         docParseContent=stemDoc(docParseContent);
         docToParse.setDocLength(docParseContent.size());
         docToParse.setParseContent(docParseContent);
         return docToParse;
-
-
     }
 
     private List<String> stemDoc(List<String> docParseContent) {

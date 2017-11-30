@@ -1,5 +1,6 @@
 package Test;
 
+import IO.PostingIO;
 import IO.ReadFile;
 import algorithms.*;
 
@@ -16,43 +17,44 @@ public class Main {
 //        String st= "dasdja-das--das.%%()#$%%^&&*(_)(()_()dka--sd";
 //        if (capitalLetterPattern.matcher(st).matches())
 //            System.out.println("yay");
-
-        long stopTime;
-        long elapsedTime;
-        ArrayList<Integer> loc;
-        long startTime = System.currentTimeMillis();
-        ReadFile read = new ReadFile();
-
-//        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
-        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\sergayen\\stop_words.txt");
-
-        Indexer indexer = new Indexer(stopWords);
-
-        IndexParser parse = new IndexParser(new Parse(), new Stemmer());
-        read.setBatchSize(100);
-//        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
-        read.readFiles(new File("D:\\documents\\users\\sergayen\\corpus"));
-
-        List<List<Doc>> list = read.getDocList();
-        stopTime = System.currentTimeMillis();
-        elapsedTime = stopTime - startTime;
-        System.out.println("Finished Reading Time: " + elapsedTime);
-
-        for (List<Doc> docList : list) {
-            for (Doc d : docList) {
-                parse.parseWithStemmer(d);
-//                List<String> listyTheDirtyList = d.getParseContent();
-                indexer.index(d);
-//              break;
-            }
-//            break;
+        PostingIO postingIO = new PostingIO("D:\\documents\\users\\laadan");
+        for (char i = '0'; i <= '9'; i++) {
+            System.out.println(i);
         }
-
-        System.out.println("-");
-
-        stopTime = System.currentTimeMillis();
-        elapsedTime = stopTime - startTime;
-        System.out.println("Total Finish Time: " + elapsedTime);
+//        long stopTime;
+//        long elapsedTime;
+//        ArrayList<Integer> loc;
+//        long startTime = System.currentTimeMillis();
+//        ReadFile read = new ReadFile();
+//
+////        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
+//        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\sergayen\\stop_words.txt");
+//
+//        Indexer indexer = new Indexer(stopWords);
+//
+//        IndexParser parse = new IndexParser(new Parse(), new Stemmer());
+//        read.setBatchSize(100);
+////        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
+//        List<List<Doc>> list = read.getDocList();
+//        stopTime = System.currentTimeMillis();
+//        elapsedTime = stopTime - startTime;
+//        System.out.println("Finished Reading Time: " + elapsedTime);
+//
+//        for (List<Doc> docList : list) {
+//            for (Doc d : docList) {
+//                parse.parseWithStemmer(d);
+////                List<String> listyTheDirtyList = d.getParseContent();
+//                indexer.index(d);
+////              break;
+//            }
+////            break;
+//        }
+//
+//        System.out.println("-");
+//
+//        stopTime = System.currentTimeMillis();
+//        elapsedTime = stopTime - startTime;
+//        System.out.println("Total Finish Time: " + elapsedTime);
     }
 }
 
