@@ -4,6 +4,7 @@ import IO.ReadFile;
 import algorithms.Doc;
 import algorithms.IndexParser;
 import algorithms.Parse;
+import algorithms.Stemmer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,10 +26,12 @@ public class Main {
         long startTime = System.currentTimeMillis();
         ReadFile read = new ReadFile();
 
-        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
-        IndexParser parse = new IndexParser(new Parse());
+//        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
+//        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
+        IndexParser parse = new IndexParser(new Parse(), new Stemmer());
         read.setBatchSize(1);
-        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
+        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
+//        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
         List<List<Doc>> list = read.getDocList();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
@@ -36,7 +39,7 @@ public class Main {
 
         for (List<Doc> docList : list) {
             for (Doc d : docList) {
-                parse.parse(d);
+                parse.parseWithStemmer(d);
                 List<String> listyTheDirtyList = d.getParseContent();
 //                int size = listyTheDirtyList.size();
 //                for (int i = 0; i < size; i++) {
