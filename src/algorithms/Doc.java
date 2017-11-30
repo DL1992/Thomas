@@ -21,20 +21,23 @@ public class Doc {
 
     }
 
-    public ArrayList<Integer> termInDocLoc(String term){
-        ArrayList<Integer> termInDocLoc = new ArrayList<>();
+    public String termInDocLoc(String term){
+        int repeatTimes = 0;
+        StringBuilder termInDocLoc = new StringBuilder();
         if(null == parseContent)
             return null;
         for (int i = 0; i < parseContent.size(); i++) {
             if(parseContent.get(i).equals(term)){
-                termInDocLoc.add(i);
+                termInDocLoc.append(i + " ");
+                repeatTimes++;
             }
         }
-        if(termInDocLoc.size()>mostCommonTermTf){
-            mostCommonTermTf = termInDocLoc.size();
+        termInDocLoc.append('*');
+        if(repeatTimes > mostCommonTermTf){
+            mostCommonTermTf = repeatTimes;
             mostCommonTerm = term;
         }
-        return termInDocLoc;
+        return termInDocLoc.toString();
     }
 
     public int getDocLength() {

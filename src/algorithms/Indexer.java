@@ -6,19 +6,21 @@ public class Indexer {
     private Map<String,String> termMap;
     private Set<String> stopWordsSet;
 
-    public void Indexer(HashSet<String> stopWordsSet){
+    public Indexer(HashSet<String> stopWordsSet){
         this.termMap = new HashMap<>();
         this.stopWordsSet = stopWordsSet;
     }
 
-    public void Indexing(Doc docToIndex){
+    public void index(Doc docToIndex){
         List<String> termList = docToIndex.getParseContent();
-        for (String s: termList
+        HashSet<String> termInDocPool = new HashSet<>();
+        for (String term: termList
              ) {
-            ArrayList<Integer> termInDocLoc;
-            if(!stopWordsSet.contains(s)) {
-                termInDocLoc = docToIndex.termInDocLoc(s);
-
+            if(!stopWordsSet.contains(term)) {
+                if (!termInDocPool.contains(term)) {
+                    termInDocPool.add(term);
+                    String termInDocLoc = docToIndex.termInDocLoc(term);
+                }
             }
         }
     }
