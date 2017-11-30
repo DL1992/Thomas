@@ -28,16 +28,16 @@ public class Doc {
             return null;
         for (int i = 0; i < parseContent.size(); i++) {
             if(parseContent.get(i).equals(term)){
-                termInDocLoc.append(i + " ");
+                termInDocLoc.append(" " + i);
                 repeatTimes++;
             }
         }
-        termInDocLoc.append('*');
+        termInDocLoc.append(" *");
         if(repeatTimes > mostCommonTermTf){
             mostCommonTermTf = repeatTimes;
             mostCommonTerm = term;
         }
-        return termInDocLoc.toString();
+        return termInDocLoc.insert(0, ""+repeatTimes).toString();
     }
 
     public int getDocLength() {

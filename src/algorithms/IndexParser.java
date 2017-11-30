@@ -9,6 +9,7 @@ public class IndexParser{
 
     public IndexParser(Parser indexParser) {
         this.indexParser = indexParser;
+        this.stemmer = null;
     }
     public IndexParser(Parser indexParser, Stemmer stemmer){
         this.indexParser = indexParser;
@@ -27,11 +28,15 @@ public class IndexParser{
     }
 
     public Doc parseWithStemmer(Doc docToParse){
+        if(null == stemmer) {
+            return parse(docToParse);
+        }
         List<String> docParseContent= parse(docToParse.getContent());
         docParseContent=stemDoc(docParseContent);
         docToParse.setDocLength(docParseContent.size());
         docToParse.setParseContent(docParseContent);
         return docToParse;
+
 
     }
 

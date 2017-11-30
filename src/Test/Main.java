@@ -1,10 +1,7 @@
 package Test;
 
 import IO.ReadFile;
-import algorithms.Doc;
-import algorithms.IndexParser;
-import algorithms.Indexer;
-import algorithms.Parse;
+import algorithms.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,8 +28,8 @@ public class Main {
 
         Indexer indexer = new Indexer(stopWords);
 
-        IndexParser parse = new IndexParser(new Parse());
-        read.setBatchSize(180);
+        IndexParser parse = new IndexParser(new Parse(), new Stemmer());
+        read.setBatchSize(100);
 //        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
         read.readFiles(new File("D:\\documents\\users\\sergayen\\corpus"));
 
@@ -43,14 +40,16 @@ public class Main {
 
         for (List<Doc> docList : list) {
             for (Doc d : docList) {
-                parse.parse(d);
+                parse.parseWithStemmer(d);
 //                List<String> listyTheDirtyList = d.getParseContent();
                 indexer.index(d);
 //              break;
             }
 //            break;
         }
-       
+
+        System.out.println("-");
+
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         System.out.println("Total Finish Time: " + elapsedTime);

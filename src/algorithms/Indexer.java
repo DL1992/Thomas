@@ -3,7 +3,7 @@ package algorithms;
 import java.util.*;
 
 public class Indexer {
-    private Map<String,String> termMap;
+    private Map<String,List<String>> termMap;
     private Set<String> stopWordsSet;
 
     public Indexer(HashSet<String> stopWordsSet){
@@ -19,7 +19,11 @@ public class Indexer {
             if(!stopWordsSet.contains(term)) {
                 if (!termInDocPool.contains(term)) {
                     termInDocPool.add(term);
-                    String termInDocLoc = docToIndex.termInDocLoc(term);
+                    if(!termMap.containsKey(term))
+                    {
+                        termMap.put(term, new ArrayList<>());
+                    }
+                    termMap.get(term).add(docToIndex.getDocName() + " " + docToIndex.termInDocLoc(term));
                 }
             }
         }
