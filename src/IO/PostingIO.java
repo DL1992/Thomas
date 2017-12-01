@@ -61,7 +61,7 @@ public class PostingIO {
             for (Map.Entry<String, List<String>> entry :
                     tempPosting.entrySet()) {
                 if (Character.isLetter(entry.getKey().charAt(0)) || Character.isDigit(entry.getKey().charAt(0))) {
-                    String st = entry.getKey().toString() + " " + entry.getValue().get(0).toString();
+                    String st = entry.getKey().toString() + "*" + entry.getValue().get(0).toString();
                     termPathMap.get(entry.getKey().charAt(0)).write(st);
                     termPathMap.get(entry.getKey().charAt(0)).flush();
                     for (int i = 1; i < entry.getValue().size(); i++) {

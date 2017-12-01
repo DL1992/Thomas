@@ -1,26 +1,25 @@
 package Test;
 
-import IO.PostingIO;
-import IO.ReadFile;
-import algorithms.*;
+import IO.PostingMerger;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-//        long hz= Runtime.getRuntime().totalMemory();
-//        System.out.println(hz);
-//        Pattern capitalLetterPattern = Pattern.compile(".*[A-Z].*");
-//        String st= "dasdja-das--das.%%()#$%%^&&*(_)(()_()dka--sd";
-//        if (capitalLetterPattern.matcher(st).matches())
-//            System.out.println("yay");
-//        PostingIO postingIO = new PostingIO("D:\\documents\\users\\laadan");
-//        for (char i = '0'; i <= '9'; i++) {
-//            System.out.println(i);
-//        }
+        PostingMerger pm = new PostingMerger();
+        File f = new File("C:\\School\\IR\\Search Engine\\Posting");
+        for (File f1 : f.listFiles()
+                ) {
+            try {
+                pm.mergeFiles(f1.getCanonicalFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+/*
         long stopTime;
         long elapsedTime;
         ArrayList<Integer> loc;
@@ -57,9 +56,10 @@ public class Main {
 
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        System.out.println("Total Finish Time: " + elapsedTime);
+        System.out.println("Total Finish Time: " + elapsedTime);*/
     }
 }
+
 
 
 
