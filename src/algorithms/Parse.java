@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Parse implements Parser {
-    private Pattern clearSpacesPattern;
-    private Pattern clearJunkPattern;
+    //    private Pattern clearSpacesPattern;
+//    private Pattern clearJunkPattern;
     private Pattern normalNumberPattern;
     private Pattern decimalPattern;
     private Pattern fractionPattern;
@@ -17,8 +17,8 @@ public class Parse implements Parser {
 
     public Parse() {
         this.months = initMonths();
-        clearSpacesPattern = Pattern.compile("\\s+");
-        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/\"]");
+//        clearSpacesPattern = Pattern.compile("\\s+");
+//        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/]"); //[^-%.\w\s/"]
         normalNumberPattern = Pattern.compile("\\d+");
         decimalPattern = Pattern.compile("\\d+\\.\\d+");
         fractionPattern = Pattern.compile("\\d+/\\d+");
@@ -62,7 +62,7 @@ public class Parse implements Parser {
         splitString = cleanDots(splitString);
         for (int i = 0; i < splitString.length; i++) {
             String stToParse = splitString[i];
-            if(stToParse.length()==0)
+            if (stToParse.length() == 0)
                 continue;
             if (Character.isDigit(stToParse.charAt(0))) {
                 if (stToParse.endsWith("th") || stToParse.endsWith("st") || stToParse.endsWith("nd") || stToParse.endsWith("rd"))
@@ -72,8 +72,7 @@ public class Parse implements Parser {
                         if (tryParsePercent(splitString, i)) {
                             tokenList.add(stToParse + " percent");
                             i++;
-                        }
-                        else {
+                        } else {
                             if (stToParse.length() <= 2 && i + 1 < splitString.length && Integer.parseInt(stToParse) <= 31 && Integer.parseInt(stToParse) > 0) {
                                 if (months.containsKey(splitString[i + 1].toLowerCase())) {
                                     i++;
@@ -81,22 +80,19 @@ public class Parse implements Parser {
                                         stToParse = "0" + stToParse;
                                     }
                                     if (i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
-                                        if (splitString[i+1].length() == 4) {
+                                        if (splitString[i + 1].length() == 4) {
                                             i++;
                                             tokenList.add(String.format("%s/%s/%s", stToParse, months.get(splitString[i - 1].toLowerCase()), splitString[i]));
-                                        }
-                                        else if (splitString[i+1].length() == 2) {
+                                        } else if (splitString[i + 1].length() == 2) {
                                             i++;
                                             tokenList.add(String.format("%s/%s/%s", stToParse, months.get(splitString[i - 1].toLowerCase()), "19" + splitString[i]));
-                                        }
-                                        else{
+                                        } else {
                                             tokenList.add(String.format("%s/%s", stToParse, months.get(splitString[i].toLowerCase())));
                                         }
                                     } else {
                                         tokenList.add(String.format("%s/%s", stToParse, months.get(splitString[i].toLowerCase())));
                                     }
-                                }
-                                else {
+                                } else {
                                     tokenList.add(stToParse);
                                 }
                             } else {
@@ -129,49 +125,43 @@ public class Parse implements Parser {
                         break;
                 }
             } else {//Here if the string doesnt conatin a number
-                if(capitalLetterPattern.matcher(stToParse).matches()){
-                    if(i+1 < splitString.length && capitalLetterPattern.matcher(splitString[i+1]).matches()){
+                if (capitalLetterPattern.matcher(stToParse).matches()) {
+                    if (i + 1 < splitString.length && capitalLetterPattern.matcher(splitString[i + 1]).matches()) {
                         tokenList.add(stToParse.toLowerCase());
-                        tokenList.add(splitString[i+1].toLowerCase());
-                        tokenList.add(stToParse.toLowerCase()+ " " + splitString[i+1].toLowerCase());
+                        tokenList.add(splitString[i + 1].toLowerCase());
+                        tokenList.add(stToParse.toLowerCase() + " " + splitString[i + 1].toLowerCase());
                         i++;
                         continue;
                     }
                 }
-                if(months.containsKey(stToParse.toLowerCase())){
-                    if(i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0){
-                        if (splitString[i+1].length() == 4) {
+                if (months.containsKey(stToParse.toLowerCase())) {
+                    if (i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
+                        if (splitString[i + 1].length() == 4) {
                             i++;
-                            tokenList.add(String.format("%s/%s",months.get(splitString[i - 1].toLowerCase()), splitString[i]));
-                        }
-                        else if (i + 1 < splitString.length && splitString[i+1].length() <= 2 && Integer.parseInt(splitString[i+1]) <= 31 && Integer.parseInt(splitString[i+1]) > 0) {
+                            tokenList.add(String.format("%s/%s", months.get(splitString[i - 1].toLowerCase()), splitString[i]));
+                        } else if (i + 1 < splitString.length && splitString[i + 1].length() <= 2 && Integer.parseInt(splitString[i + 1]) <= 31 && Integer.parseInt(splitString[i + 1]) > 0) {
                             i++;
-                            String fullDay=splitString[i];
+                            String fullDay = splitString[i];
                             if (fullDay.length() == 1) {
                                 fullDay = "0" + fullDay;
                             }
-                            if(i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
+                            if (i + 1 < splitString.length && tokenType(splitString[i + 1]) == 0) {
                                 if (splitString[i + 1].length() == 4) {
                                     i++;
                                     tokenList.add(String.format("%s/%s/%s", fullDay, months.get(stToParse.toLowerCase()), splitString[i]));
+                                } else {
+                                    tokenList.add(String.format("%s/%s", fullDay, months.get(stToParse.toLowerCase())));
                                 }
-                                else{
-                                    tokenList.add(String.format("%s/%s",fullDay,months.get(stToParse.toLowerCase())));
-                                }
+                            } else {
+                                tokenList.add(String.format("%s/%s", fullDay, months.get(stToParse.toLowerCase())));
                             }
-                            else{
-                                tokenList.add(String.format("%s/%s",fullDay,months.get(stToParse.toLowerCase())));
-                            }
-                        }
-                        else{
+                        } else {
                             tokenList.add(stToParse.toLowerCase());
                         }
-                    }
-                    else{
+                    } else {
                         tokenList.add(stToParse.toLowerCase());
                     }
-                }
-                else{
+                } else {
                     tokenList.add(stToParse.toLowerCase());
                 }
             } // end of else (not a number and checked for words)
@@ -181,8 +171,8 @@ public class Parse implements Parser {
 
     private String[] cleanDots(String[] splitString) {
         for (int i = 0; i < splitString.length; i++) {
-            if(splitString[i].endsWith(".")){
-                splitString[i]=splitString[i].substring(0,splitString[i].length());
+            if (splitString[i].endsWith(".")) {
+                splitString[i] = splitString[i].substring(0, splitString[i].length());
             }
         }
         return splitString;
@@ -198,13 +188,13 @@ public class Parse implements Parser {
     }
 
     private int tokenType(String stToParse) {
-        if(normalNumberPattern.matcher(stToParse).matches())
+        if (normalNumberPattern.matcher(stToParse).matches())
             return 0;
-        if(decimalPattern.matcher(stToParse).matches())
+        if (decimalPattern.matcher(stToParse).matches())
             return 1;
         if (fractionPattern.matcher(stToParse).matches())
             return 2;
-        if(stToParse.endsWith("%"))
+        if (stToParse.endsWith("%"))
             return 3;
         return 4;
     }

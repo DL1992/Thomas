@@ -20,7 +20,7 @@ public class ReadFile {
     public ReadFile() {
         this.docList = new ArrayList<>();
         clearSpacesPattern = Pattern.compile("\\s+");
-        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/\"]");
+        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/]"); //^-%.\w\s/"
         currFileNum = 0;
         batchSize = 1;
     }

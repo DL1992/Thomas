@@ -1,5 +1,7 @@
 Dic/Cache should be TreeMap cuz of sorting?
-length of doc is before or after stemming and stopwords? does it matter?
 is it okay to work with Docs in memory?
 parallel for reader and parser? consumer producer?
+
+
+name of doc cant be with spaces cuz of string later.
 
