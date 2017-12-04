@@ -26,7 +26,7 @@ public class Main {
         Indexer indexer = new Indexer(stopWords);
 
         IndexParser parse = new IndexParser(new Parse(), new Stemmer());
-        read.setBatchSize(4);
+        read.setBatchSize(12);
         read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
         List<List<Doc>> list = read.getDocList();
         stopTime = System.currentTimeMillis();
@@ -46,19 +46,19 @@ public class Main {
 //                break;
             }
             ps.createPostingFile(indexer.getTermMap());
-//            counter++;
-//            if(counter%4==0){
-//                File f = new File("D:\\documents\\users\\laadan\\Posting");
-//                for (File f1 : f.listFiles()
-//                        ) {
-//                    try {
-//                        pm.mergeFiles(f1.getCanonicalFile());
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//            }
+            counter++;
+            if(counter%4==0){
+                File f = new File("D:\\documents\\users\\laadan\\Posting");
+                for (File f1 : f.listFiles()
+                        ) {
+                    try {
+                        pm.mergeFiles(f1.getCanonicalFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
 //            ps.closePostingMap();
 //          break;
         }

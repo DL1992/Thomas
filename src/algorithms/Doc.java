@@ -46,9 +46,7 @@ public class Doc {
     }
 
     public String termInDocLoc2(String term){
-        if(term.equals("politics"))
-            System.out.println( termsInDocNum.get(term).toString() + " " + termsLocMap.get(term)+ " *");
-        return termsInDocNum.get(term).toString() + termsLocMap.get(term)+ " *";
+        return termsInDocNum.get(term).toString()+ " " + termsLocMap.get(term)+ " *";
     }
 
     public String termInDocLoc(String term){
