@@ -1,20 +1,25 @@
 package algorithms;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-public class IndexParser{
+public class IndexParser {
     private Parser indexParser;
     private Stemmer stemmer;
+    private Set<String> stopWords;
 
-    public IndexParser(Parser indexParser) {
+    public IndexParser(Parser indexParser, Set<String> stopWords) {
         this.indexParser = indexParser;
+        this.stopWords = stopWords;
         this.stemmer = null;
     }
 
-    public IndexParser(Parser indexParser, Stemmer stemmer){
+    public IndexParser(Parser indexParser, Stemmer stemmer, Set<String> stopWords) {
         this.indexParser = indexParser;
         this.stemmer = stemmer;
+        this.stopWords = stopWords;
     }
 
     private List<String> parse(String st) {
@@ -23,16 +28,27 @@ public class IndexParser{
 
     public Doc parse(Doc docToParse) {
         List<String> docParseContent = parse(docToParse.getContent());
+        removeStopWords(docParseContent);
         docToParse.setDocLength(docParseContent.size());
         docToParse.setParseContent(docParseContent);
         return docToParse;
     }
 
-    public Doc parseWithStemmer(Doc docToParse){
-        if(null == stemmer)
+    private void removeStopWords(List<String> docParseContent) {
+        Iterator<String> listIt = docParseContent.iterator();
+        while (listIt.hasNext()) {
+            String term = listIt.next();
+            if (stopWords.contains(term))
+                listIt.remove();
+        }
+    }
+
+    public Doc parseWithStemmer(Doc docToParse) {
+        if (null == stemmer)
             return parse(docToParse);
-        List<String> docParseContent= parse(docToParse.getContent());
-        docParseContent=stemDoc(docParseContent);
+        List<String> docParseContent = parse(docToParse.getContent());
+        removeStopWords(docParseContent);
+        docParseContent = stemDoc(docParseContent);
         docToParse.setDocLength(docParseContent.size());
         docToParse.setParseContent(docParseContent);
         return docToParse;
@@ -40,9 +56,9 @@ public class IndexParser{
 
     private List<String> stemDoc(List<String> docParseContent) {
         List<String> stemTokenList = new ArrayList<>();
-        for (String termBeforeStem:
-             docParseContent) {
-            stemmer.add(termBeforeStem.toCharArray(),termBeforeStem.length());
+        for (String termBeforeStem :
+                docParseContent) {
+            stemmer.add(termBeforeStem.toCharArray(), termBeforeStem.length());
             stemmer.stem();
             stemTokenList.add(stemmer.toString());
         }

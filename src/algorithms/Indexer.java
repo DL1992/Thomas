@@ -4,11 +4,9 @@ import java.util.*;
 
 public class Indexer {
     private Map<String, List<String>> termMap;
-    private Set<String> stopWordsSet;
 
-    public Indexer(HashSet<String> stopWordsSet) {
+    public Indexer() {
         this.termMap = new TreeMap<>();
-        this.stopWordsSet = stopWordsSet;
     }
 
     public Map<String, List<String>> getTermMap() {
@@ -25,15 +23,14 @@ public class Indexer {
         HashSet<String> termInDocPool = new HashSet<>();
         for (String term : termList
                 ) {
-            if (!stopWordsSet.contains(term)) {
-                if (!termInDocPool.contains(term)) {
-                    termInDocPool.add(term);
-                    if (!termMap.containsKey(term)) {
-                        termMap.put(term, new ArrayList<>());
-                    }
-                    termMap.get(term).add(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
+            if (!termInDocPool.contains(term)) {
+                termInDocPool.add(term);
+                if (!termMap.containsKey(term)) {
+                    termMap.put(term, new ArrayList<>());
                 }
+                termMap.get(term).add(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
             }
+
         }
     }
 }
