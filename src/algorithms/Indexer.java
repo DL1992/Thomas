@@ -21,6 +21,7 @@ public class Indexer {
 
     public void index(Doc docToIndex) {
         List<String> termList = docToIndex.getParseContent();
+        docToIndex.createTermLocMap();
         HashSet<String> termInDocPool = new HashSet<>();
         for (String term : termList
                 ) {
@@ -30,10 +31,9 @@ public class Indexer {
                     if (!termMap.containsKey(term)) {
                         termMap.put(term, new ArrayList<>());
                     }
-                    termMap.get(term).add(docToIndex.getDocName() + " " + docToIndex.termInDocLoc(term));
+                    termMap.get(term).add(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
                 }
             }
         }
     }
-
 }

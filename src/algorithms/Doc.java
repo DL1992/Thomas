@@ -1,7 +1,9 @@
 package algorithms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Doc {
     private int docLength;
@@ -10,15 +12,43 @@ public class Doc {
     private String mostCommonTerm;
     private int mostCommonTermTf;
     private List<String> parseContent;
+    private Map<String,StringBuilder> termsLocMap;
+    private Map<String,Integer> termsInDocNum;
 
     public Doc(String docName, String content) {
         this.docLength=0;
         this.docName = docName;
         this.content = content;
         this.parseContent = new ArrayList<>();
+        this.termsLocMap = new HashMap<>();
+        this.termsInDocNum = new HashMap<>();
         this.mostCommonTerm="";
         this.mostCommonTermTf=0;
 
+    }
+
+    public void createTermLocMap(){
+        if(null== parseContent)
+            return;
+        for (int i = 0; i < parseContent.size(); i++) {
+            if(!termsLocMap.containsKey(parseContent.get(i))){
+                termsInDocNum.put(parseContent.get(i),1);
+                termsLocMap.put(parseContent.get(i),new StringBuilder());
+                termsLocMap.get(parseContent.get(i)).append(i);
+            }
+            else{
+                termsLocMap.get(parseContent.get(i)).append(" " + i);
+                int repeatTimes = termsInDocNum.get(parseContent.get(i));
+                repeatTimes++;
+                termsInDocNum.put(parseContent.get(i), repeatTimes);
+            }
+        }
+    }
+
+    public String termInDocLoc2(String term){
+        if(term.equals("politics"))
+            System.out.println( termsInDocNum.get(term).toString() + " " + termsLocMap.get(term)+ " *");
+        return termsInDocNum.get(term).toString() + termsLocMap.get(term)+ " *";
     }
 
     public String termInDocLoc(String term){

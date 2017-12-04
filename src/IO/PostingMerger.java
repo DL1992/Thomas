@@ -53,13 +53,15 @@ public class PostingMerger {
                 mergePostWriter.flush();
             }
             if (null == firstPostLine) {
-                mergePostWriter.write(secondPostLine + "\n");
+                if(null != secondPostLine)
+                    mergePostWriter.write(secondPostLine + "\n");
                 while (null != (secondPostLine = secondPostReader.readLine())) {
                     mergePostWriter.write(secondPostLine + "\n");
                     mergePostWriter.flush();
                 }
             } else {
-                mergePostWriter.write(firstPostLine + "\n");
+                if(null != firstPostLine)
+                    mergePostWriter.write(firstPostLine + "\n");
                 while (null != (firstPostLine = firstPostReader.readLine())) {
                     mergePostWriter.write(firstPostLine + "\n");
                     mergePostWriter.flush();

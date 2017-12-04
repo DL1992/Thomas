@@ -55,27 +55,40 @@ public class PostingIO {
 //        this.termPathMap = termPathMap;
     }
 
+    private void closePostingMap(){
+        for (Writer writer:
+             termPathMap.values()) {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void createPostingFile(Map<String, List<String>> tempPosting) {
         try {
             createPostingMap();
             for (Map.Entry<String, List<String>> entry :
                     tempPosting.entrySet()) {
-                if (Character.isLetter(entry.getKey().charAt(0)) || Character.isDigit(entry.getKey().charAt(0))) {
+                if (Character.isLetter(entry.getKey().charAt(0)) || Character.isDigit(entry.getKey().charAt(0))) { /// This should not be here - parser should work better.
                     String st = entry.getKey().toString() + "*" + entry.getValue().get(0).toString();
-                    termPathMap.get(entry.getKey().charAt(0)).write(st);
-                    termPathMap.get(entry.getKey().charAt(0)).flush();
+                    termPathMap.get(entry.getKey().toLowerCase().charAt(0)).write(st);
+                    termPathMap.get(entry.getKey().toLowerCase().charAt(0)).flush();
                     for (int i = 1; i < entry.getValue().size(); i++) {
                         st = entry.getValue().get(i).toString() + " ";
-                        termPathMap.get(entry.getKey().charAt(0)).write(st);
-                        termPathMap.get(entry.getKey().charAt(0)).flush();
+                        termPathMap.get(entry.getKey().toLowerCase().charAt(0)).write(st);
+                        termPathMap.get(entry.getKey().toLowerCase().charAt(0)).flush();
                     }
-                    termPathMap.get(entry.getKey().charAt(0)).write("\n");
-                    termPathMap.get(entry.getKey().charAt(0)).flush();
+                    termPathMap.get(entry.getKey().toLowerCase().charAt(0)).write("\n");
+                    termPathMap.get(entry.getKey().toLowerCase().charAt(0)).flush();
                 }
             }
+            closePostingMap();
             postingFileNum++;
-            if (postingFileNum == 5)
+            if (postingFileNum == 5){
                 postingFileNum = 0;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
