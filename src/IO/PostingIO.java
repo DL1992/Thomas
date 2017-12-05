@@ -1,9 +1,7 @@
 package IO;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PostingIO {
     private String postingPath;
@@ -55,9 +53,9 @@ public class PostingIO {
 //        this.termPathMap = termPathMap;
     }
 
-    private void closePostingMap(){
-        for (Writer writer:
-             termPathMap.values()) {
+    private void closePostingMap() {
+        for (Writer writer :
+                termPathMap.values()) {
             try {
                 writer.close();
             } catch (IOException e) {
@@ -66,11 +64,13 @@ public class PostingIO {
         }
     }
 
+    //Sort using creating a treeMap
     public void createPostingFile(Map<String, List<String>> tempPosting) {
         try {
+            Map<String, List<String>> sortedTempPosting = new TreeMap<>(tempPosting);
             createPostingMap();
             for (Map.Entry<String, List<String>> entry :
-                    tempPosting.entrySet()) {
+                   /* tempPosting */sortedTempPosting.entrySet()) {
                 if (Character.isLetter(entry.getKey().charAt(0)) || Character.isDigit(entry.getKey().charAt(0))) { /// This should not be here - parser should work better.
                     String st = entry.getKey().toString() + "*" + entry.getValue().get(0).toString();
                     termPathMap.get(entry.getKey().toLowerCase().charAt(0)).write(st);
@@ -86,12 +86,41 @@ public class PostingIO {
             }
             closePostingMap();
             postingFileNum++;
-            if (postingFileNum == 5){
-                postingFileNum = 0;
-            }
+//            if (postingFileNum == 5){
+//                postingFileNum = 0;
+//            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    //SORT using sorting the keys in a list.
+    public void createPostingFile2(Map<String, StringBuilder> tempPosting) {
+        try {
+            List<String> sortedKeyList = new ArrayList<>(tempPosting.keySet());
+            Collections.sort(sortedKeyList);
+            createPostingMap();
+            for (String term :
+                    sortedKeyList) {
+                if (Character.isLetter(term.charAt(0)) || Character.isDigit(term.charAt(0))) { /// This should not be here - parser should work better.
+                    String st = term + "*";
+                    termPathMap.get(term.toLowerCase().charAt(0)).write(st);
+//                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
+                    st = tempPosting.get(term).toString() + " ";
+                    termPathMap.get(term.toLowerCase().charAt(0)).write(st);
+//                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
+                    termPathMap.get(term.toLowerCase().charAt(0)).write("\n");
+                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
+                    }
+                }
+            closePostingMap();
+            postingFileNum++;
+//            if (postingFileNum == 5){
+//                postingFileNum = 0;
+//            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -15,15 +15,19 @@ public class ReadFile {
     private Pattern clearJunkPattern;
     private int currFileNum;
     private int batchSize;
+    private int numOfDoc;
 
 
     public ReadFile() {
         this.docList = new ArrayList<>();
-        clearSpacesPattern = Pattern.compile("\\s+");
-        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/]"); //^-%.\w\s/"
-        currFileNum = 0;
-        batchSize = 1;
+        this.clearSpacesPattern = Pattern.compile("\\s+");
+        this.clearJunkPattern = Pattern.compile("[^-%.\\w\\s/]"); //^-%.\w\s/"
+        this.currFileNum = 0;
+        this.batchSize = 1;
+        this.numOfDoc=0;
     }
+
+    public int getNumOfDoc(){return numOfDoc;}
 
     public void setBatchSize(int batchSize) {
         if (!(batchSize < 0))
@@ -87,6 +91,7 @@ public class ReadFile {
                     docContent = clearSpacesPattern.matcher(docContent).replaceAll(" ");
                     docContent = clearJunkPattern.matcher(docContent).replaceAll("");
                     Doc doc = new Doc(docName, docContent);
+                    numOfDoc++;
                     docList.add(doc);
                 }
             }

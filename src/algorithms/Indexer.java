@@ -3,13 +3,13 @@ package algorithms;
 import java.util.*;
 
 public class Indexer {
-    private Map<String, List<String>> termMap;
+    private Map<String, StringBuilder> termMap;
 
     public Indexer() {
-        this.termMap = new TreeMap<>();
-    }
+        this.termMap = new HashMap<>();
+    } /// TODO: check if TreeMap better
 
-    public Map<String, List<String>> getTermMap() {
+    public Map<String, StringBuilder> getTermMap() {
         return termMap;
     }
 
@@ -26,9 +26,9 @@ public class Indexer {
             if (!termInDocPool.contains(term)) {
                 termInDocPool.add(term);
                 if (!termMap.containsKey(term)) {
-                    termMap.put(term, new ArrayList<>());
+                    termMap.put(term, new StringBuilder());
                 }
-                termMap.get(term).add(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
+                termMap.get(term).append(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
             }
 
         }
