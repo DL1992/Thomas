@@ -1,13 +1,30 @@
 package IO;
 
 import java.io.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PostingMerger {
-    private int mergeNum;
+    private volatile int mergeNum;
+    private ExecutorService threadPool;
 
 
     public PostingMerger() {
         this.mergeNum = 0;
+        this.threadPool = Executors.newFixedThreadPool(6);
+    }
+
+    public void threadMerge(File mergePath){
+        for (File f:
+                mergePath.listFiles() ) {
+                threadPool.execute(() -> {
+                    try {
+                        mergeFiles(f.getCanonicalFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+        }
     }
 
     public void mergeFiles(File mergePath) {
@@ -15,8 +32,9 @@ public class PostingMerger {
         int counter = postingFiles.length;
         while (counter > 1) {
             postingFiles = mergePath.listFiles();
+            int postingFileSize = postingFiles.length;
             try {
-                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[0].getCanonicalPath(), postingFiles[1].getCanonicalPath());
+                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[postingFileSize-1].getCanonicalPath(), postingFiles[postingFileSize-2].getCanonicalPath());
                 new File(postingFiles[0].getCanonicalPath()).delete();
                 new File(postingFiles[1].getCanonicalPath()).delete();
                 counter--;

@@ -26,12 +26,11 @@ public class IndexParser {
         return indexParser.parse(st);
     }
 
-    public Doc parse(Doc docToParse) {
+    public void parse(Doc docToParse) {
         List<String> docParseContent = parse(docToParse.getContent());
         removeStopWords(docParseContent);
         docToParse.setDocLength(docParseContent.size());
         docToParse.setParseContent(docParseContent);
-        return docToParse;
     }
 
     private void removeStopWords(List<String> docParseContent) {
@@ -43,15 +42,14 @@ public class IndexParser {
         }
     }
 
-    public Doc parseWithStemmer(Doc docToParse) {
+    public void parseWithStemmer(Doc docToParse) {
         if (null == stemmer)
-            return parse(docToParse);
+             parse(docToParse);
         List<String> docParseContent = parse(docToParse.getContent());
         removeStopWords(docParseContent);
         docParseContent = stemDoc(docParseContent);
         docToParse.setDocLength(docParseContent.size());
         docToParse.setParseContent(docParseContent);
-        return docToParse;
     }
 
     private List<String> stemDoc(List<String> docParseContent) {
