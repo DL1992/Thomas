@@ -1,6 +1,9 @@
 package algorithms;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class Indexer {
     private Map<String, StringBuilder> termMap;
@@ -26,7 +29,7 @@ public class Indexer {
 
     public void index(Doc docToIndex) {
         List<String> termList = docToIndex.getParseContent();
-        docToIndex.createTermLocMap();
+//        docToIndex.createTermLocMap();
         HashSet<String> termInDocPool = new HashSet<>();
         for (String term : termList
                 ) {
@@ -39,6 +42,6 @@ public class Indexer {
             }
 
         }
-        docMap.put(docToIndex.getDocName(),docToIndex.getDocLength() + " " + docToIndex.getMostCommonTerm() + " " + docToIndex.getMostCommonTermTf());
+        docMap.put(docToIndex.getDocName(), docToIndex.getDocLength() + " " + docToIndex.getMostCommonTerm() + " " + docToIndex.getMostCommonTermTf());
     }
 }

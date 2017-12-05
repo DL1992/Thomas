@@ -27,7 +27,7 @@ public class Doc {
 
     }
 
-    public void createTermLocMap() {
+    private void createTermLocMap() {
         if (null == parseContent)
             return;
         for (int i = 0; i < parseContent.size(); i++) {
@@ -89,6 +89,7 @@ public class Doc {
     public void setParseContent(List<String> parseContentList) {
         if (null != parseContentList) {
             this.parseContent = parseContentList;
+            createTermLocMap();
             this.content = null;
         }
     }
