@@ -17,6 +17,7 @@ public class PostingMerger {
     public void threadMerge(File mergePath){
         for (File f:
                 mergePath.listFiles() ) {
+            if(f.isDirectory())
                 threadPool.execute(() -> {
                     try {
                         mergeFiles(f.getCanonicalFile());
@@ -25,6 +26,7 @@ public class PostingMerger {
                     }
                 });
         }
+        threadPool.shutdown();
     }
 
     public void mergeFiles(File mergePath) {

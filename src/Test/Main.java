@@ -68,6 +68,7 @@ public class Main {
             }
             postingTime = System.currentTimeMillis();
             ps.createPostingFile2(indexer.getTermMap());
+            ps.createDocPosting(indexer.getDocMap());
 
 //            counter++;
 //            if (counter % 4 == 0) {

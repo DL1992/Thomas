@@ -4,17 +4,24 @@ import java.util.*;
 
 public class Indexer {
     private Map<String, StringBuilder> termMap;
+    private Map<String, String> docMap;
 
     public Indexer() {
         this.termMap = new HashMap<>();
-    } /// TODO: check if TreeMap better
+        this.docMap = new HashMap<>();
+    }
 
     public Map<String, StringBuilder> getTermMap() {
         return termMap;
     }
 
+    public Map<String, String> getDocMap() {
+        return docMap;
+    }
+
     public void clearMap() {
         termMap.clear();
+        docMap.clear();
     }
 
     public void index(Doc docToIndex) {
@@ -32,5 +39,6 @@ public class Indexer {
             }
 
         }
+        docMap.put(docToIndex.getDocName(),docToIndex.getDocLength() + " " + docToIndex.getMostCommonTerm() + " " + docToIndex.getMostCommonTermTf());
     }
 }

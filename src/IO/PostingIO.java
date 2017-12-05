@@ -95,6 +95,22 @@ public class PostingIO {
 
     }
 
+    public void createDocPosting(Map<String,String> tempDocPosting){
+        try {
+            BufferedWriter docWrite =  new BufferedWriter(new FileWriter(new File(postingPath + "\\docPosting"), true));
+            for (Map.Entry<String,String> entry:
+                 tempDocPosting.entrySet()) {
+                docWrite.write(entry.getKey() + " " + entry.getValue() + "*");
+            }
+            docWrite.flush();
+            docWrite.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     //SORT using sorting the keys in a list.
     public void createPostingFile2(Map<String, StringBuilder> tempPosting) {
         try {
