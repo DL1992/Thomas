@@ -29,7 +29,7 @@ public class Main {
         Indexer indexer = new Indexer();
 
         IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
-        read.setBatchSize(100);
+        read.setBatchSize(10);
         read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
 //        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
         List<List<Doc>> list = read.getDocList();

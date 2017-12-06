@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Set;
 
 public class IndexParser {
-    private Parser indexParser;
+    private IParser indexParser;
     private Stemmer stemmer;
     private Set<String> stopWords;
 
-    public IndexParser(Parser indexParser, Set<String> stopWords) {
+    public IndexParser(IParser indexParser, Set<String> stopWords) {
         this.indexParser = indexParser;
         this.stopWords = stopWords;
         this.stemmer = null;
     }
 
-    public IndexParser(Parser indexParser, Stemmer stemmer, Set<String> stopWords) {
+    public IndexParser(IParser indexParser, Stemmer stemmer, Set<String> stopWords) {
         this.indexParser = indexParser;
         this.stemmer = stemmer;
         this.stopWords = stopWords;
@@ -44,7 +44,7 @@ public class IndexParser {
 
     public void parseWithStemmer(Doc docToParse) {
         if (null == stemmer)
-             parse(docToParse);
+            parse(docToParse);
         List<String> docParseContent = parse(docToParse.getContent());
         removeStopWords(docParseContent);
         docParseContent = stemDoc(docParseContent);

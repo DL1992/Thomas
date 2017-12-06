@@ -2,6 +2,6 @@ package algorithms;
 
 import java.util.List;
 
-public interface Parser {
+public interface IParser {
     List<String> parse(String st);
 }

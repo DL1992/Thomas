@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class Parse implements Parser {
+public class Parse implements IParser {
     //    private Pattern clearSpacesPattern;
 //    private Pattern clearJunkPattern;
     private Pattern normalNumberPattern;

@@ -48,10 +48,14 @@ public class Doc {
         }
     }
 
+    //TODO: rename after deleting termindocloc
     public String termInDocLoc2(String term) {
-        return termsInDocNum.get(term).toString() + " " + termsLocMap.get(term) + " *";
+        float Ntf = (float) (termsInDocNum.get(term) / (float) mostCommonTermTf);
+        return String.format("%.2f %s %s *", Ntf, termsInDocNum.get(term), termsLocMap.get(term));
+//        return termsInDocNum.get(term).toString() + " " + termsLocMap.get(term) + " *";
     }
 
+    //TODO: delete this function. rename termindocloc2.
     public String termInDocLoc(String term) {
         int repeatTimes = 0;
         StringBuilder termInDocLoc = new StringBuilder();
