@@ -34,7 +34,6 @@ public class PostingIO {
     }
 
     private void createPostingMap() throws IOException {
-//        Map<Character, Writer> termPathMap = new HashMap<>();
         for (char alphabet = 'a'; alphabet <= 'z'; alphabet++) {
             if (alphabet >= 'a' && alphabet <= 'e')
                 termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\posting" + postingFileNum), true)));
@@ -50,7 +49,6 @@ public class PostingIO {
         for (char i = '0'; i <= '9'; i++) {
             termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\posting" + postingFileNum), true)));
         }
-//        this.termPathMap = termPathMap;
     }
 
     private void closePostingMap() {
@@ -112,7 +110,7 @@ public class PostingIO {
 
     }
 
-    //SORT using sorting the keys in a list.
+    //SORT using sorting the keys in a list. this is the right function
     public void createPostingFile2(Map<String, StringBuilder> tempPosting) {
         try {
             List<String> sortedKeyList = new ArrayList<>(tempPosting.keySet());
@@ -123,19 +121,14 @@ public class PostingIO {
                 if (Character.isLetter(term.charAt(0)) || Character.isDigit(term.charAt(0))) { /// This should not be here - parser should work better.
                     String st = term + "*";
                     termPathMap.get(term.toLowerCase().charAt(0)).write(st);
-//                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
-                    st = tempPosting.get(term).toString() /*+ " "*/;
+                    st = tempPosting.get(term).toString();
                     termPathMap.get(term.toLowerCase().charAt(0)).write(st);
-//                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
                     termPathMap.get(term.toLowerCase().charAt(0)).write("\n");
                     termPathMap.get(term.toLowerCase().charAt(0)).flush();
                     }
                 }
             closePostingMap();
             postingFileNum++;
-//            if (postingFileNum == 5){
-//                postingFileNum = 0;
-//            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -26,7 +26,7 @@ public class Main {
         HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
 //        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
 
-        Indexer indexer = new Indexer();
+        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
 
         IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
         read.setBatchSize(20);
@@ -38,9 +38,9 @@ public class Main {
         elapsedTime = stopTime - startTime;
         System.out.println("Finished Reading Time: " + elapsedTime);
         indexTime = System.currentTimeMillis();
-        PostingIO ps = new PostingIO("D:\\documents\\users\\laadan");
+//        PostingIO ps = new PostingIO("D:\\documents\\users\\laadan");
 //        PostingIO ps = new PostingIO("C:\\School\\IR\\Search Engine");
-        PostingMerger pm = new PostingMerger();
+//        PostingMerger pm = new PostingMerger();
         int counter = 0;
 
         for (List<Doc> docList : list) {
@@ -63,13 +63,14 @@ public class Main {
             }
 //                List<String> listyTheDirtyList = d.getParseContent();
 //                d.createTermLocMap();
-            for (Doc d :
-                    docList) {
-                indexer.index(d);
-            }
+//            for (Doc d :
+//                    docList) {
+//                indexer.index(d);
+//            }
+            indexer.index(docList);
             postingTime = System.currentTimeMillis();
-            ps.createPostingFile2(indexer.getTermMap());
-            ps.createDocPosting(indexer.getDocMap());
+//            ps.createPostingFile2(indexer.getTermMap());
+//            ps.createDocPosting(indexer.getDocMap());
 
 //            counter++;
 //            if (counter % 4 == 0) {
@@ -93,9 +94,10 @@ public class Main {
         elapsedTime = stopTime - postingTime;
         System.out.println("Finished temp posting Time: " + elapsedTime);
         mergerTime = System.currentTimeMillis();
-        File f = new File("D:\\documents\\users\\laadan\\Posting");
+        indexer.mergeTempPosting();
+//        File f = new File("D:\\documents\\users\\laadan\\Posting");
 //        File f = new File("C:\\School\\IR\\Search Engine\\Posting");
-        pm.threadMerge(f);
+//        pm.threadMerge(f);
 //        List<Thread> threadsList = new ArrayList<>();
 //        for (File f1 : f.listFiles()
 //                ) {
