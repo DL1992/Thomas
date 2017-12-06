@@ -72,10 +72,10 @@ public class PostingIO {
             for (Map.Entry<String, List<String>> entry :
                    /* tempPosting */sortedTempPosting.entrySet()) {
                 if (Character.isLetter(entry.getKey().charAt(0)) || Character.isDigit(entry.getKey().charAt(0))) { /// This should not be here - parser should work better.
-                    String st = entry.getKey().toString() + "*" + entry.getValue().get(0).toString();
+                    String st = entry.getKey().toString() + "*";
                     termPathMap.get(entry.getKey().toLowerCase().charAt(0)).write(st);
                     termPathMap.get(entry.getKey().toLowerCase().charAt(0)).flush();
-                    for (int i = 1; i < entry.getValue().size(); i++) {
+                    for (int i = 0; i < entry.getValue().size(); i++) {
                         st = entry.getValue().get(i).toString() + " ";
                         termPathMap.get(entry.getKey().toLowerCase().charAt(0)).write(st);
                         termPathMap.get(entry.getKey().toLowerCase().charAt(0)).flush();
@@ -102,6 +102,7 @@ public class PostingIO {
                  tempDocPosting.entrySet()) {
                 docWrite.write(entry.getKey() + " " + entry.getValue() + "*");
             }
+            docWrite.write("\n");
             docWrite.flush();
             docWrite.close();
         } catch (IOException e) {
@@ -123,7 +124,7 @@ public class PostingIO {
                     String st = term + "*";
                     termPathMap.get(term.toLowerCase().charAt(0)).write(st);
 //                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
-                    st = tempPosting.get(term).toString() + " ";
+                    st = tempPosting.get(term).toString() /*+ " "*/;
                     termPathMap.get(term.toLowerCase().charAt(0)).write(st);
 //                    termPathMap.get(term.toLowerCase().charAt(0)).flush();
                     termPathMap.get(term.toLowerCase().charAt(0)).write("\n");

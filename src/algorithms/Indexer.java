@@ -24,6 +24,7 @@ public class Indexer {
 
     public void clearMap() {
         termMap.clear();
+//        termMap.values().clear();
         docMap.clear();
     }
 

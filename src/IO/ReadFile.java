@@ -73,7 +73,7 @@ public class ReadFile {
         List<Doc> docList = new ArrayList<>();
         BufferedReader reader = null;
         String docName = null;
-        String docContent = null;
+        String docContent;
         List<String> docContentList = null;
         try {
             reader = new BufferedReader(new FileReader(path));
@@ -90,7 +90,7 @@ public class ReadFile {
                     docContent = joinString(docContentList);
                     docContent = clearSpacesPattern.matcher(docContent).replaceAll(" ");
                     docContent = clearJunkPattern.matcher(docContent).replaceAll("");
-                    Doc doc = new Doc(docName, docContent);
+                    Doc doc = new Doc(docName.trim(), docContent);
                     numOfDoc++;
                     docList.add(doc);
                 }

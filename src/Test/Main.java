@@ -23,22 +23,23 @@ public class Main {
         long mergerTime;
         ReadFile read = new ReadFile();
 
-//        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
-        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
+        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
+//        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
 
         Indexer indexer = new Indexer();
 
         IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
-        read.setBatchSize(10);
-        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
-//        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
+        read.setBatchSize(20);
+//        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
+        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
+        int numOfDoc = read.getNumOfDoc();
         List<List<Doc>> list = read.getDocList();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         System.out.println("Finished Reading Time: " + elapsedTime);
         indexTime = System.currentTimeMillis();
-//        PostingIO ps = new PostingIO("D:\\documents\\users\\laadan");
-        PostingIO ps = new PostingIO("C:\\School\\IR\\Search Engine");
+        PostingIO ps = new PostingIO("D:\\documents\\users\\laadan");
+//        PostingIO ps = new PostingIO("C:\\School\\IR\\Search Engine");
         PostingMerger pm = new PostingMerger();
         int counter = 0;
 
@@ -87,12 +88,13 @@ public class Main {
 //            ps.closePostingMap();
 //          break;
         }
+        indexer.clearMap();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - postingTime;
         System.out.println("Finished temp posting Time: " + elapsedTime);
         mergerTime = System.currentTimeMillis();
-//        File f = new File("D:\\documents\\users\\laadan\\Posting");
-        File f = new File("C:\\School\\IR\\Search Engine\\Posting");
+        File f = new File("D:\\documents\\users\\laadan\\Posting");
+//        File f = new File("C:\\School\\IR\\Search Engine\\Posting");
         pm.threadMerge(f);
 //        List<Thread> threadsList = new ArrayList<>();
 //        for (File f1 : f.listFiles()
