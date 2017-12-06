@@ -8,7 +8,6 @@ public class PostingIO {
     private int postingFileNum;
     private Map<Character, Writer> termPathMap;
 
-    //    private Map<Character, String> termPathMap;
 
     public PostingIO(String path) {
         postingFileNum = 0;
@@ -18,7 +17,6 @@ public class PostingIO {
     private void initialize(String path) {
         createPostingFolders(path);
         termPathMap = new HashMap<>();
-//        createPostingMap(path);
     }
 
     private void createPostingFolders(String path) {
@@ -33,21 +31,25 @@ public class PostingIO {
 //        new File(postingPath + "\\JUNK").mkdirs();
     }
 
-    private void createPostingMap() throws IOException {
-        for (char alphabet = 'a'; alphabet <= 'z'; alphabet++) {
-            if (alphabet >= 'a' && alphabet <= 'e')
-                termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\posting" + postingFileNum), true)));
-            if (alphabet >= 'f' && alphabet <= 'j')
-                termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\F-J\\posting" + postingFileNum), true)));
-            if (alphabet >= 'k' && alphabet <= 'o')
-                termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\K-O\\posting" + postingFileNum), true)));
-            if (alphabet >= 'p' && alphabet <= 't')
-                termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\P-T\\posting" + postingFileNum), true)));
-            if (alphabet >= 'u' && alphabet <= 'z')
-                termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\U-Z\\posting" + postingFileNum), true)));
-        }
-        for (char i = '0'; i <= '9'; i++) {
-            termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\posting" + postingFileNum), true)));
+    private void createPostingMap() {
+        try {
+            for (char alphabet = 'a'; alphabet <= 'z'; alphabet++) {
+                if (alphabet >= 'a' && alphabet <= 'e')
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\posting" + postingFileNum), true)));
+                if (alphabet >= 'f' && alphabet <= 'j')
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\F-J\\posting" + postingFileNum), true)));
+                if (alphabet >= 'k' && alphabet <= 'o')
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\K-O\\posting" + postingFileNum), true)));
+                if (alphabet >= 'p' && alphabet <= 't')
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\P-T\\posting" + postingFileNum), true)));
+                if (alphabet >= 'u' && alphabet <= 'z')
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\U-Z\\posting" + postingFileNum), true)));
+            }
+            for (char i = '0'; i <= '9'; i++) {
+                termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\posting" + postingFileNum), true)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -132,5 +134,12 @@ public class PostingIO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private String createTermInfo(String postingLine){
+        String termInfo;
+        String[] splitLine = postingLine.split("\\*");
+        int numTermInDocs = splitLine.length-1;
     }
 }
