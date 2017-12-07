@@ -35,18 +35,18 @@ public class PostingIO {
         try {
             for (char alphabet = 'a'; alphabet <= 'z'; alphabet++) {
                 if (alphabet >= 'a' && alphabet <= 'e')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\Posting" + postingFileNum), true)));
                 if (alphabet >= 'f' && alphabet <= 'j')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\F-J\\posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\F-J\\Posting" + postingFileNum), true)));
                 if (alphabet >= 'k' && alphabet <= 'o')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\K-O\\posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\K-O\\Posting" + postingFileNum), true)));
                 if (alphabet >= 'p' && alphabet <= 't')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\P-T\\posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\P-T\\Posting" + postingFileNum), true)));
                 if (alphabet >= 'u' && alphabet <= 'z')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\U-Z\\posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\U-Z\\Posting" + postingFileNum), true)));
             }
             for (char i = '0'; i <= '9'; i++) {
-                termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\posting" + postingFileNum), true)));
+                termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\Posting" + postingFileNum), true)));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,14 +95,14 @@ public class PostingIO {
 
     }
 
-    public void createDocPosting(Map<String,String> tempDocPosting){
+    public void createDocPosting(Map<String, String> tempDocPosting) {
         try {
-            BufferedWriter docWrite =  new BufferedWriter(new FileWriter(new File(postingPath + "\\docPosting"), true));
-            for (Map.Entry<String,String> entry:
-                 tempDocPosting.entrySet()) {
+            BufferedWriter docWrite = new BufferedWriter(new FileWriter(new File(postingPath + "\\docPosting"), true));
+            for (Map.Entry<String, String> entry :
+                    tempDocPosting.entrySet()) {
                 docWrite.write(entry.getKey() + " " + entry.getValue() + "*");
+                docWrite.write("\n");
             }
-            docWrite.write("\n");
             docWrite.flush();
             docWrite.close();
         } catch (IOException e) {
@@ -127,8 +127,8 @@ public class PostingIO {
                     termPathMap.get(term.toLowerCase().charAt(0)).write(st);
                     termPathMap.get(term.toLowerCase().charAt(0)).write("\n");
                     termPathMap.get(term.toLowerCase().charAt(0)).flush();
-                    }
                 }
+            }
             closePostingMap();
             postingFileNum++;
         } catch (IOException e) {
@@ -136,10 +136,47 @@ public class PostingIO {
         }
     }
 
-
-    private String createTermInfo(String postingLine){
-        String termInfo;
-        String[] splitLine = postingLine.split("\\*");
-        int numTermInDocs = splitLine.length-1;
+    public Map<String, String> createPostingDic(int numOfDoc) {
+        Map<String, String> postingDic = new HashMap<>();
+        File postingFile = new File(postingPath);
+        for (File f :
+                postingFile.listFiles()) {
+            if (f.isDirectory()) {
+                File[] tempPostingFile = f.listFiles();
+                try {
+                    addTermsFromPosting(numOfDoc, postingDic, tempPostingFile[0].getCanonicalPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return postingDic;
     }
+
+    private void addTermsFromPosting(int numOfDoc, Map<String, String> postingDic, String canonicalPath) {
+        try {
+            BufferedReader tempBuffReader = new BufferedReader(new FileReader(canonicalPath));
+            String line;
+            int lineNum = 1;
+            int numTermInDocs;
+            double termDfi;
+            while (null != (line = tempBuffReader.readLine())) {
+                String[] splitLine = line.split("\\*");
+                numTermInDocs = splitLine.length - 1;
+                termDfi = Math.log(numOfDoc / (float) numTermInDocs);
+                postingDic.put(splitLine[0], String.format("%s %s %s %.2f", canonicalPath, lineNum, numTermInDocs, termDfi));
+                lineNum++;
+            }
+            tempBuffReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+//    private String createTermInfo(String postingLine){
+//        String termInfo;
+//        String[] splitLine = postingLine.split("\\*");
+//        int numTermInDocs = splitLine.length-1;
+//    }
 }

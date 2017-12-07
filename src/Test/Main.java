@@ -1,7 +1,5 @@
 package Test;
 
-import IO.PostingIO;
-import IO.PostingMerger;
 import IO.ReadFile;
 import algorithms.*;
 
@@ -9,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,15 +22,16 @@ public class Main {
         long mergerTime;
         ReadFile read = new ReadFile();
 
-        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
-//        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
+//        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
+        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
 
-        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
+//        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
+        Indexer indexer = new Indexer("C:\\School\\IR\\Search Engine");
 
         IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
-        read.setBatchSize(20);
-//        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
-        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
+        read.setBatchSize(5);
+        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
+//        read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
         int numOfDoc = read.getNumOfDoc();
         List<List<Doc>> list = read.getDocList();
         stopTime = System.currentTimeMillis();
@@ -45,7 +45,7 @@ public class Main {
 
         for (List<Doc> docList : list) {
             List<Thread> threads = new ArrayList<>();
-            indexer.clearMap();
+//            indexer.clearMap();
             for (Doc d : docList) {
                 threads.add(new Thread(() -> parse.parse(d)));
             }
@@ -89,7 +89,7 @@ public class Main {
 //            ps.closePostingMap();
 //          break;
         }
-        indexer.clearMap();
+//        indexer.clearMap();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - postingTime;
         System.out.println("Finished temp posting Time: " + elapsedTime);
@@ -121,6 +121,7 @@ public class Main {
 //                e.printStackTrace();
 //            }
 //        }
+        Map<String, String> dic = indexer.createFinalDic();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - mergerTime;
         System.out.println("Finished merging Time: " + elapsedTime);

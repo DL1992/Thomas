@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class Indexer {
     private String postingPath;
+    private int numOfDocIndexd;
     private Map<String, StringBuilder> termMap;
     private Map<String, String> docMap;
     private PostingIO pIO;
@@ -23,6 +24,7 @@ public class Indexer {
 
     public Indexer(String postingPath) {
         this.postingPath = postingPath;
+        this.numOfDocIndexd = 0;
         this.termMap = new HashMap<>();
         this.docMap = new HashMap<>();
         this.pIO = new PostingIO(postingPath);
@@ -38,34 +40,23 @@ public class Indexer {
     }
 
     public void clearMap() {
-        termMap.clear();
-//        termMap.values().clear();
+//        termMap.clear();
+        termMap.values().clear();
         docMap.clear();
     }
 
-    public void mergeTempPosting(){
-        pMerger.threadMerge(new File(postingPath+ "\\Posting"));
+    public void mergeTempPosting() {
+        pMerger.threadMerge(new File(postingPath + "\\Posting"));
     }
 
     public void index(List<Doc> docToIndexList) {
         for (Doc docToIndex :
                 docToIndexList) {
-            List<String> termList = docToIndex.getParseContent();
-            HashSet<String> termInDocPool = new HashSet<>();
-            for (String term : termList
-                    ) {
-                if (!termInDocPool.contains(term)) {
-                    termInDocPool.add(term);
-                    if (!termMap.containsKey(term)) {
-                        termMap.put(term, new StringBuilder());
-                    }
-                    termMap.get(term).append(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
-                }
-            }
-            docMap.put(docToIndex.getDocName(), docToIndex.getDocLength() + " " + docToIndex.getMostCommonTerm() + " " + docToIndex.getMostCommonTermTf());
+            index(docToIndex);
         }
         pIO.createPostingFile2(this.termMap);
         pIO.createDocPosting(this.docMap);
+        clearMap();
     }
 
 
@@ -84,5 +75,10 @@ public class Indexer {
 
         }
         docMap.put(docToIndex.getDocName(), docToIndex.getDocLength() + " " + docToIndex.getMostCommonTerm() + " " + docToIndex.getMostCommonTermTf());
+        numOfDocIndexd++;
+    }
+
+    public Map<String, String> createFinalDic() {
+        return pIO.createPostingDic(numOfDocIndexd);
     }
 }

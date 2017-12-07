@@ -3,6 +3,7 @@ package IO;
 import java.io.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class PostingMerger {
     private volatile int mergeNum;
@@ -14,10 +15,10 @@ public class PostingMerger {
         this.threadPool = Executors.newFixedThreadPool(6);
     }
 
-    public void threadMerge(File mergePath){
-        for (File f:
-                mergePath.listFiles() ) {
-            if(f.isDirectory())
+    public void threadMerge(File mergePath) {
+        for (File f :
+                mergePath.listFiles()) {
+            if (f.isDirectory())
                 threadPool.execute(() -> {
                     try {
                         mergeFiles(f.getCanonicalFile());
@@ -27,6 +28,11 @@ public class PostingMerger {
                 });
         }
         threadPool.shutdown();
+        try {
+            threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void mergeFiles(File mergePath) {
@@ -36,7 +42,7 @@ public class PostingMerger {
             postingFiles = mergePath.listFiles();
             int postingFileSize = postingFiles.length;
             try {
-                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[postingFileSize-1].getCanonicalPath(), postingFiles[postingFileSize-2].getCanonicalPath());
+                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[/*postingFileSize - 1*/0].getCanonicalPath(), postingFiles[/*postingFileSize - 2*/1].getCanonicalPath());
                 new File(postingFiles[0].getCanonicalPath()).delete();
                 new File(postingFiles[1].getCanonicalPath()).delete();
                 counter--;
@@ -51,7 +57,7 @@ public class PostingMerger {
         try {
             BufferedReader firstPostReader = new BufferedReader(new FileReader(firstPosting));
             BufferedReader secondPostReader = new BufferedReader(new FileReader(secondPosting));
-            BufferedWriter mergePostWriter = new BufferedWriter(new FileWriter(new File(mergePath + "\\M" + mergeNum)));
+            BufferedWriter mergePostWriter = new BufferedWriter(new FileWriter(new File(mergePath + "\\m" + mergeNum)));
             String firstPostLine = firstPostReader.readLine();
             String secondPostLine = secondPostReader.readLine();
             while (null != firstPostLine && null != secondPostLine) {
@@ -73,14 +79,14 @@ public class PostingMerger {
                 mergePostWriter.flush();
             }
             if (null == firstPostLine) {
-                if(null != secondPostLine)
+                if (null != secondPostLine)
                     mergePostWriter.write(secondPostLine + "\n");
                 while (null != (secondPostLine = secondPostReader.readLine())) {
                     mergePostWriter.write(secondPostLine + "\n");
                     mergePostWriter.flush();
                 }
             } else {
-                if(null != firstPostLine)
+                if (null != firstPostLine)
                     mergePostWriter.write(firstPostLine + "\n");
                 while (null != (firstPostLine = firstPostReader.readLine())) {
                     mergePostWriter.write(firstPostLine + "\n");
