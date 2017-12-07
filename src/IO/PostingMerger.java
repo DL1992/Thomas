@@ -7,15 +7,17 @@ import java.util.concurrent.TimeUnit;
 
 public class PostingMerger {
     private volatile int mergeNum;
+    private char mergeChar;
     private ExecutorService threadPool;
 
 
     public PostingMerger() {
         this.mergeNum = 0;
-        this.threadPool = Executors.newFixedThreadPool(6);
+        this.mergeChar ='z';
     }
 
     public void threadMerge(File mergePath) {
+        this.threadPool = Executors.newCachedThreadPool();
         for (File f :
                 mergePath.listFiles()) {
             if (f.isDirectory())
@@ -33,16 +35,18 @@ public class PostingMerger {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        mergeChar -=1;
     }
 
     public void mergeFiles(File mergePath) {
+//        int mergeNum=0;
         File[] postingFiles = mergePath.listFiles();
         int counter = postingFiles.length;
         while (counter > 1) {
             postingFiles = mergePath.listFiles();
-            int postingFileSize = postingFiles.length;
+//            int postingFileSize = postingFiles.length;
             try {
-                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[/*postingFileSize - 1*/0].getCanonicalPath(), postingFiles[/*postingFileSize - 2*/1].getCanonicalPath());
+                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[/*postingFileSize - 1*/0].getCanonicalPath(), postingFiles[/*postingFileSize - 2*/1].getCanonicalPath()/*,mergeNum*/);
                 new File(postingFiles[0].getCanonicalPath()).delete();
                 new File(postingFiles[1].getCanonicalPath()).delete();
                 counter--;
@@ -53,11 +57,12 @@ public class PostingMerger {
         }
     }
 
-    private void mergePostingFiles(String mergePath, String firstPosting, String secondPosting) {
+    private void mergePostingFiles(String mergePath, String firstPosting, String secondPosting/*, int mergeNum*/) {
         try {
+//            int mergeNum=0;
             BufferedReader firstPostReader = new BufferedReader(new FileReader(firstPosting));
             BufferedReader secondPostReader = new BufferedReader(new FileReader(secondPosting));
-            BufferedWriter mergePostWriter = new BufferedWriter(new FileWriter(new File(mergePath + "\\m" + mergeNum)));
+            BufferedWriter mergePostWriter = new BufferedWriter(new FileWriter(new File(mergePath + "\\" + mergeChar + mergeNum))); //Z" + mergeNum insted of mergeChar
             String firstPostLine = firstPostReader.readLine();
             String secondPostLine = secondPostReader.readLine();
             while (null != firstPostLine && null != secondPostLine) {

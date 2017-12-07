@@ -35,18 +35,18 @@ public class PostingIO {
         try {
             for (char alphabet = 'a'; alphabet <= 'z'; alphabet++) {
                 if (alphabet >= 'a' && alphabet <= 'e')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\Posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\A-E\\aPosting" + postingFileNum), true)));
                 if (alphabet >= 'f' && alphabet <= 'j')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\F-J\\Posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\F-J\\aPosting" + postingFileNum), true)));
                 if (alphabet >= 'k' && alphabet <= 'o')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\K-O\\Posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\K-O\\aPosting" + postingFileNum), true)));
                 if (alphabet >= 'p' && alphabet <= 't')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\P-T\\Posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\P-T\\aPosting" + postingFileNum), true)));
                 if (alphabet >= 'u' && alphabet <= 'z')
-                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\U-Z\\Posting" + postingFileNum), true)));
+                    termPathMap.put(alphabet, new BufferedWriter(new FileWriter(new File(postingPath + "\\U-Z\\aPosting" + postingFileNum), true)));
             }
             for (char i = '0'; i <= '9'; i++) {
-                termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\Posting" + postingFileNum), true)));
+                termPathMap.put(i, new BufferedWriter(new FileWriter(new File(postingPath + "\\0-9\\aPosting" + postingFileNum), true)));
             }
         } catch (IOException e) {
             e.printStackTrace();

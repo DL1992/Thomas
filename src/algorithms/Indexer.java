@@ -3,15 +3,13 @@ package algorithms;
 import IO.PostingIO;
 import IO.PostingMerger;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class Indexer {
     private String postingPath;
     private int numOfDocIndexd;
+    private Map<String,String> termDic;
     private Map<String, StringBuilder> termMap;
     private Map<String, String> docMap;
     private PostingIO pIO;
@@ -25,6 +23,7 @@ public class Indexer {
     public Indexer(String postingPath) {
         this.postingPath = postingPath;
         this.numOfDocIndexd = 0;
+        this.termDic = null;
         this.termMap = new HashMap<>();
         this.docMap = new HashMap<>();
         this.pIO = new PostingIO(postingPath);
@@ -78,7 +77,55 @@ public class Indexer {
         numOfDocIndexd++;
     }
 
-    public Map<String, String> createFinalDic() {
-        return pIO.createPostingDic(numOfDocIndexd);
+    public void createFinalDic() {
+        this.termDic = pIO.createPostingDic(numOfDocIndexd);
+    }
+
+    public TermInfo getTermInfo(String term){
+        if(null == termDic)
+            return null;
+        String[] termInfoString = termDic.get(term).split(" ");
+        TermInfo termInfo = new TermInfo(Integer.parseInt(termInfoString[2]),Double.parseDouble(termInfoString[3]));
+        try {
+            BufferedReader termReader = new BufferedReader(new FileReader(new File(termInfoString[0])));
+            String postingLine=null;
+            int i=0;
+            while (i<Integer.parseInt(termInfoString[1])){
+                postingLine = termReader.readLine();
+                i++;
+            }
+            String[] termDocList = postingLine.split("\\*");
+            termInfo.setTermDocList(Arrays.asList(termDocList));
+            termReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return termInfo;
+    }
+
+    public void saveTermDic(String path){
+        try {
+            ObjectOutputStream osTermDic = new ObjectOutputStream(new FileOutputStream(new File(path)));
+            osTermDic.writeObject(termDic);
+            osTermDic.flush();
+            osTermDic.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadTermDic(String path){
+        ObjectInputStream oisTermDic;
+        try {
+            oisTermDic = new ObjectInputStream(new FileInputStream(new File(path)));
+            termDic=(HashMap<String,String>)oisTermDic.readObject();
+            oisTermDic.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
