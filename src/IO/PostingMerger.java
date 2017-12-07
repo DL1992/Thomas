@@ -44,6 +44,12 @@ public class PostingMerger {
         int counter = postingFiles.length;
         while (counter > 1) {
             postingFiles = mergePath.listFiles();
+            if((postingFiles[1].length()) > (80000*1024)) {
+                if(!(postingFiles[0].length() > (80000*1024))){
+                    counter--;
+                    continue;
+                }
+            }
 //            int postingFileSize = postingFiles.length;
             try {
                 mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[/*postingFileSize - 1*/0].getCanonicalPath(), postingFiles[/*postingFileSize - 2*/1].getCanonicalPath()/*,mergeNum*/);

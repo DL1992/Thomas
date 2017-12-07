@@ -28,7 +28,7 @@ public class Main {
         IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
 //        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
 
-        for(int i=0;i<1;i++){
+        for(int i=0;i<10;i++){
             read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
             List<List<Doc>> list = read.getDocList();
             stopTime = System.currentTimeMillis();
