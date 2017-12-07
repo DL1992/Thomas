@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Parse implements IParser {
-    //    private Pattern clearSpacesPattern;
-//    private Pattern clearJunkPattern;
+        private Pattern clearSpacesPattern;
+    private Pattern clearJunkPattern;
     private Pattern normalNumberPattern;
     private Pattern decimalPattern;
     private Pattern fractionPattern;
@@ -17,8 +17,8 @@ public class Parse implements IParser {
 
     public Parse() {
         this.months = initMonths();
-//        clearSpacesPattern = Pattern.compile("\\s+");
-//        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/]"); //[^-%.\w\s/"]
+        clearSpacesPattern = Pattern.compile("\\s+");
+        clearJunkPattern = Pattern.compile("[^-%.\\w\\s/]"); //[^-%.\w\s/"]
         normalNumberPattern = Pattern.compile("\\d+");
         decimalPattern = Pattern.compile("\\d+\\.\\d+");
         fractionPattern = Pattern.compile("\\d+/\\d+");
@@ -56,9 +56,9 @@ public class Parse implements IParser {
     @Override
     public List<String> parse(String st) {
         List<String> tokenList = new ArrayList<>();
-//        st = clearSpacesPattern.matcher(st).replaceAll(" ");
-//        String[] splitString = clearJunkPattern.matcher(st).replaceAll("").split(" ");
-        String[] splitString = st.split(" ");
+        st = clearSpacesPattern.matcher(st).replaceAll(" ");
+        String[] splitString = clearJunkPattern.matcher(st).replaceAll("").split(" ");
+//        String[] splitString = st.split(" ");
         splitString = cleanDots(splitString);
         for (int i = 0; i < splitString.length; i++) {
             String stToParse = splitString[i];
