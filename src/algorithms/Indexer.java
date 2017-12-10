@@ -94,6 +94,8 @@ public class Indexer {
         TermInfo termInfo = new TermInfo(Integer.parseInt(termInfoString[2]),Double.parseDouble(termInfoString[3]));
         try {
             BufferedReader termReader = new BufferedReader(new FileReader(new File(termInfoString[0])));
+//            randomAccessFile.seek(Long.parseLong(termInfoString[1]));
+//            String postingLine=randomAccessFile.readLine();
             String postingLine=null;
             int i=0;
             while (i<Integer.parseInt(termInfoString[1])){

@@ -162,12 +162,13 @@ public class PostingIO {
             int lineNum = 1;
             int numTermInDocs;
             double termDfi;
+
             while (null != (line = tempBuffReader.readLine())) {
                 String[] splitLine = line.split("\\*");
                 numTermInDocs = splitLine.length - 1;
                 termDfi = Math.log(numOfDoc / (float) numTermInDocs);
-                postingDic.put(splitLine[0], String.format("%s %s %s %.2f", canonicalPath, lineNum, numTermInDocs, termDfi));
-                lineNum++;
+                postingDic.put(splitLine[0], String.format("%s %s %s %s", canonicalPath, lineNum, numTermInDocs, termDfi));
+
             }
             tempBuffReader.close();
         } catch (FileNotFoundException e) {
@@ -176,9 +177,5 @@ public class PostingIO {
             e.printStackTrace();
         }
     }
-//    private String createTermInfo(String postingLine){
-//        String termInfo;
-//        String[] splitLine = postingLine.split("\\*");
-//        int numTermInDocs = splitLine.length-1;
-//    }
+
 }

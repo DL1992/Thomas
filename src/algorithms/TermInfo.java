@@ -1,9 +1,10 @@
 package algorithms;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class TermInfo {
+public class TermInfo implements Serializable{
     private List<String> termDocList;
     private int totalNumInCorpus;
     private double termDfi;

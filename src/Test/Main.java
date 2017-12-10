@@ -12,10 +12,20 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
 
-        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
-        indexer.loadTermDic("D:\\documents\\users\\laadan\\dic");
-        Cache cache = indexer.createCache();
-        int a = 0;
+        Cache c = new Cache();
+        c.loadTermDic("D:\\documents\\users\\laadan\\cache");
+        int a =0;
+//        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
+//        long startTime = System.currentTimeMillis();
+//        indexer.loadTermDic("D:\\documents\\users\\laadan\\dic");
+//        long dicTime = System.currentTimeMillis();
+//        System.out.println("time to load dic is: " + (dicTime-startTime));
+//        long cacheStartTime = System.currentTimeMillis();
+//        Cache cache = indexer.createCache();
+//        long cacheStoptime = System.currentTimeMillis();
+//        System.out.println(cacheStoptime-cacheStartTime);
+//        cache.saveCache("D:\\documents\\users\\laadan\\cache");
+
 //        long stopTime;
 //        long elapsedTime;
 //        ArrayList<Integer> loc;
@@ -69,7 +79,7 @@ public class Main {
 //                elapsedTime = stopTime - mergerTime;
 //                System.out.println("Finished merging Time: " + elapsedTime);
 //            }
-//            if(i==17)
+//            if(i==17)///should be 17!!!!!
 //                indexer.mergeTempPosting(true);
 //        }
 //        long dicTime = System.currentTimeMillis();
@@ -86,26 +96,26 @@ public class Main {
 //        stopTime = System.currentTimeMillis();
 //        elapsedTime = stopTime - startTime;
 //        System.out.println("total time: " + elapsedTime);
-
-    }
-
-    private static void parseDocs(IndexParser parse, List<Doc> docList) {
-        List<Thread> threads = new ArrayList<>();
-        for (Doc d : docList) {
-            threads.add(new Thread(() -> parse.parse(d)));
-        }
-        for (Thread t :
-                threads) {
-            t.start();
-        }
-        for (Thread t :
-                threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//
+//    }
+//
+//    private static void parseDocs(IndexParser parse, List<Doc> docList) {
+//        List<Thread> threads = new ArrayList<>();
+//        for (Doc d : docList) {
+//            threads.add(new Thread(() -> parse.parse(d)));
+//        }
+//        for (Thread t :
+//                threads) {
+//            t.start();
+//        }
+//        for (Thread t :
+//                threads) {
+//            try {
+//                t.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 }
 
