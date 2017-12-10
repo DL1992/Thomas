@@ -134,4 +134,26 @@ public class Indexer {
             e.printStackTrace();
         }
     }
+
+    public Cache createCache() {
+        Map<String,TermInfo> cache = new HashMap<>();
+        PriorityQueue<Map.Entry<String, String>> pqTerms = new PriorityQueue<>(new Comparator<Map.Entry<String, String>>() {
+            @Override
+            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                String[] firstTerm = o1.getValue().split(" ");
+                String[] secondTerm = o2.getValue().split(" ");
+                return Double.compare(Double.parseDouble(firstTerm[3]), Double.parseDouble(secondTerm[3]));
+            }
+        });
+        for (Map.Entry<String,String> entry:
+             termDic.entrySet()) {
+            pqTerms.add(entry);
+        }
+        for (int i = 0; i < 10000; i++) {
+            Map.Entry<String, String> term = pqTerms.remove();
+            cache.put(term.getKey(), getTermInfo(term.getKey()));
+        }
+        return new Cache(cache);
+
+    }
 }

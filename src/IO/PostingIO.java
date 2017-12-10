@@ -66,6 +66,7 @@ public class PostingIO {
     }
 
     //Sort using creating a treeMap
+    //TODO: delete this
     public void createPostingFile(Map<String, List<String>> tempPosting) {
         try {
             Map<String, List<String>> sortedTempPosting = new TreeMap<>(tempPosting);
