@@ -44,8 +44,8 @@ public class Indexer {
         docMap.clear();
     }
 
-    public void mergeTempPosting() {
-        pMerger.threadMerge(new File(postingPath + "\\Posting"));
+    public void mergeTempPosting(boolean mergeFlag) {
+        pMerger.threadMerge(new File(postingPath + "\\Posting"),mergeFlag);
     }
 
     public void createPostFiles(){

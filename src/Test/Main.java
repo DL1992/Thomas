@@ -35,23 +35,23 @@ public class Main {
             elapsedTime = readTime - startTime;
             System.out.println("Finished Reading Time: " + elapsedTime);
             indexTime = System.currentTimeMillis();
+            List<Thread> threadsList = new ArrayList<>();
             for (List<Doc> docList : list) {
-                List<Thread> threads = new ArrayList<>();
-                for (Doc d : docList) {
-                    threads.add(new Thread(() -> parse.parse(d)));
+                threadsList.add(new Thread(() -> parseDocs(parse, docList)));
+            }
+            for (Thread t :
+                    threadsList) {
+                t.start();
+            }
+            for (Thread t :
+                    threadsList) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                for (Thread t :
-                        threads) {
-                    t.start();
-                }
-                for (Thread t :
-                        threads) {
-                    try {
-                        t.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            }
+            for (List<Doc> docList : list) {
                 indexer.index(docList);
             }
             indexer.createPostFiles();
@@ -60,7 +60,10 @@ public class Main {
             System.out.println("Finished temp posting Time: " + elapsedTime);
             if(i%3==0){
                 mergerTime = System.currentTimeMillis();
-                indexer.mergeTempPosting();
+                if(i==17)
+                    indexer.mergeTempPosting(true);
+                else
+                    indexer.mergeTempPosting(false);
                 stopTime = System.currentTimeMillis();
                 elapsedTime = stopTime - mergerTime;
                 System.out.println("Finished merging Time: " + elapsedTime);
@@ -81,6 +84,25 @@ public class Main {
         elapsedTime = stopTime - startTime;
         System.out.println("total time: " + elapsedTime);
 
+    }
+
+    private static void parseDocs(IndexParser parse, List<Doc> docList) {
+        List<Thread> threads = new ArrayList<>();
+        for (Doc d : docList) {
+            threads.add(new Thread(() -> parse.parse(d)));
+        }
+        for (Thread t :
+                threads) {
+            t.start();
+        }
+        for (Thread t :
+                threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

@@ -16,14 +16,14 @@ public class PostingMerger {
         this.mergeChar ='z';
     }
 
-    public void threadMerge(File mergePath) {
+    public void threadMerge(File mergePath, boolean mergeFlag) {
         this.threadPool = Executors.newCachedThreadPool();
         for (File f :
                 mergePath.listFiles()) {
             if (f.isDirectory())
                 threadPool.execute(() -> {
                     try {
-                        mergeFiles(f.getCanonicalFile());
+                        mergeFiles(f.getCanonicalFile(), mergeFlag);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -38,16 +38,18 @@ public class PostingMerger {
         mergeChar -=1;
     }
 
-    public void mergeFiles(File mergePath) {
+    public void mergeFiles(File mergePath, boolean mergeFlag) {
 //        int mergeNum=0;
         File[] postingFiles = mergePath.listFiles();
         int counter = postingFiles.length;
         while (counter > 1) {
             postingFiles = mergePath.listFiles();
-            if((postingFiles[1].length()) > (130000*1024)) { //Merge only big files of more them 150MB
-                if(!(postingFiles[0].length() > (130000*1024))){
-                    counter--;
-                    continue;
+            if(!mergeFlag){
+                if((postingFiles[1].length()) > (150000*1024)) { //Merge only big files of more them 150MB
+                    if(!(postingFiles[0].length() > (150000*1024))){
+                        counter--;
+                        continue;
+                    }
                 }
             }
 //            int postingFileSize = postingFiles.length;
