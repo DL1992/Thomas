@@ -21,6 +21,7 @@ public class PostingIO {
 
     private void createPostingFolders(String path) {
         postingPath = path + "\\Posting";
+        //TODO: should have a function to delete the folders in start over
         new File(postingPath).mkdirs();
         new File(postingPath + "\\A-E").mkdirs();
         new File(postingPath + "\\F-J").mkdirs();

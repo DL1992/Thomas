@@ -17,10 +17,10 @@ public class Main {
         ArrayList<Integer> loc;
         long startTime = System.currentTimeMillis();
         long indexTime;
-        long postingTime = 0;
         long mergerTime;
+        long readTime;
         ReadFile read = new ReadFile();
-        read.setBatchSize(100);
+        read.setBatchSize(101);
         HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
 //        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
         Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
@@ -28,11 +28,11 @@ public class Main {
         IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
 //        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
 
-        for(int i=0;i<10;i++){
+        for(int i=0;i<18;i++){
             read.readFiles(new File("D:\\documents\\users\\laadan\\corpus"));
             List<List<Doc>> list = read.getDocList();
-            stopTime = System.currentTimeMillis();
-            elapsedTime = stopTime - startTime;
+            readTime = System.currentTimeMillis();
+            elapsedTime = readTime - startTime;
             System.out.println("Finished Reading Time: " + elapsedTime);
             indexTime = System.currentTimeMillis();
             for (List<Doc> docList : list) {
@@ -54,14 +54,17 @@ public class Main {
                 }
                 indexer.index(docList);
             }
+            indexer.createPostFiles();
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - indexTime;
             System.out.println("Finished temp posting Time: " + elapsedTime);
-            mergerTime = System.currentTimeMillis();
-            indexer.mergeTempPosting();
-            stopTime = System.currentTimeMillis();
-            elapsedTime = stopTime - mergerTime;
-            System.out.println("Finished merging Time: " + elapsedTime);
+            if(i%3==0){
+                mergerTime = System.currentTimeMillis();
+                indexer.mergeTempPosting();
+                stopTime = System.currentTimeMillis();
+                elapsedTime = stopTime - mergerTime;
+                System.out.println("Finished merging Time: " + elapsedTime);
+            }
         }
         long dicTime = System.currentTimeMillis();
         indexer.createFinalDic();

@@ -48,14 +48,20 @@ public class Indexer {
         pMerger.threadMerge(new File(postingPath + "\\Posting"));
     }
 
+    public void createPostFiles(){
+        pIO.createPostingFile2(this.termMap);
+        pIO.createDocPosting(this.docMap);
+        clearMap();
+    }
+
     public void index(List<Doc> docToIndexList) {
         for (Doc docToIndex :
                 docToIndexList) {
             index(docToIndex);
         }
-        pIO.createPostingFile2(this.termMap);
-        pIO.createDocPosting(this.docMap);
-        clearMap();
+//        pIO.createPostingFile2(this.termMap);
+//        pIO.createDocPosting(this.docMap);
+//        clearMap();
     }
 
 

@@ -44,8 +44,8 @@ public class PostingMerger {
         int counter = postingFiles.length;
         while (counter > 1) {
             postingFiles = mergePath.listFiles();
-            if((postingFiles[1].length()) > (150000*1024)) {
-                if(!(postingFiles[0].length() > (150000*1024))){
+            if((postingFiles[1].length()) > (130000*1024)) { //Merge only big files of more them 150MB
+                if(!(postingFiles[0].length() > (130000*1024))){
                     counter--;
                     continue;
                 }
