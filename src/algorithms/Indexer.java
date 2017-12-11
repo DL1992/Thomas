@@ -16,13 +16,10 @@ public class Indexer {
     private Map<String, String> docMap;
     private PostingIO pIO;
     private PostingMerger pMerger;
+    private boolean stemFlag;
 
-    public Indexer() {
-        this.termMap = new HashMap<>();
-        this.docMap = new HashMap<>();
-    }
 
-    public Indexer(String postingPath, Set<String> cacheWords) {
+    public Indexer(String postingPath, Set<String> cacheWords, boolean stemFlag) {
         this.postingPath = postingPath;
         this.numOfDocIndexd = 0;
         this.termDic = null;
@@ -30,8 +27,9 @@ public class Indexer {
         this.termMap = new HashMap<>();
         this.cacheMap = new HashMap<>();
         this.docMap = new HashMap<>();
-        this.pIO = new PostingIO(postingPath);
+        this.pIO = new PostingIO(postingPath, stemFlag);
         this.pMerger = new PostingMerger();
+        this.stemFlag = stemFlag;
     }
 
     public Map<String, StringBuilder> getTermMap() {
@@ -43,13 +41,15 @@ public class Indexer {
     }
 
     public void clearMap() {
-//        termMap.clear();
         termMap.values().clear();
         docMap.clear();
     }
 
     public void mergeTempPosting(boolean mergeFlag) {
-        pMerger.threadMerge(new File(postingPath + "\\Posting"),mergeFlag);
+        if(!stemFlag)
+            pMerger.threadMerge(new File(postingPath + "\\Posting"),mergeFlag);
+        else
+            pMerger.threadMerge(new File(postingPath + "\\stemPosting"),mergeFlag);
     }
 
     public void createPostFiles(){
@@ -63,9 +63,6 @@ public class Indexer {
                 docToIndexList) {
             index(docToIndex);
         }
-//        pIO.createPostingFile2(this.termMap);
-//        pIO.createDocPosting(this.docMap);
-//        clearMap();
     }
 
 
@@ -99,8 +96,6 @@ public class Indexer {
         TermInfo termInfo = new TermInfo(Integer.parseInt(termInfoString[2]),Double.parseDouble(termInfoString[3]));
         try {
             BufferedReader termReader = new BufferedReader(new FileReader(new File(termInfoString[0])));
-//            randomAccessFile.seek(Long.parseLong(termInfoString[1]));
-//            String postingLine=randomAccessFile.readLine();
             String postingLine=null;
             int i=0;
             while (i<Integer.parseInt(termInfoString[1])){
@@ -142,8 +137,8 @@ public class Indexer {
         }
     }
 
-    public void createCache(){
-        pIO.createCache(this.cacheMap);
+    public Cache createCache(){
+       return new Cache(this.cacheMap);
     }
 
 
@@ -163,7 +158,7 @@ public class Indexer {
         }
         BufferedWriter bw = null;
         try {
-            bw = new BufferedWriter(new FileWriter(new File("D:\\documents\\users\\laadan\\cache")));
+            bw = new BufferedWriter(new FileWriter(new File("cacheWords")));
             for (int i = 0; i < 10000; i++) {
                 Map.Entry<String, String> term = pqTerms.remove();
                 bw.write(term.getKey());

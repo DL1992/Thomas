@@ -6,11 +6,18 @@ import java.util.*;
 public class PostingIO {
     private String postingPath;
     private int postingFileNum;
+    private boolean stemFlag;
     private Map<Character, Writer> termPathMap;
 
-
     public PostingIO(String path) {
-        postingFileNum = 0;
+        this.postingFileNum = 0;
+        this.stemFlag = false;
+        initialize(path);
+    }
+
+    public PostingIO(String path, boolean stemFlag) {
+        this.postingFileNum = 0;
+        this.stemFlag = stemFlag;
         initialize(path);
     }
 
@@ -20,7 +27,10 @@ public class PostingIO {
     }
 
     private void createPostingFolders(String path) {
-        postingPath = path + "\\Posting";
+        if(!stemFlag)
+            postingPath = path + "\\Posting";
+        else
+            postingPath = path + "\\stemPosting";
         //TODO: should have a function to delete the folders in start over
         new File(postingPath).mkdirs();
         new File(postingPath + "\\A-E").mkdirs();
@@ -171,7 +181,7 @@ public class PostingIO {
                 numTermInDocs = splitLine.length - 1;
                 termDfi = Math.log10(numOfDoc / (float) numTermInDocs);
                 if(cacheWords.contains(splitLine[0])){
-                    cacheDic.put(splitLine[0],createCacheFromPost(splitLine));
+                    cacheDic.put(splitLine[0],String.format("%s %s %s",canonicalPath, lineNum, createCacheFromPost(splitLine)));
                     postingDic.put(splitLine[0], String.format("cache ^ %s %s",numTermInDocs, termDfi));
                 }
                 else{

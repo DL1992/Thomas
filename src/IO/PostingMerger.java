@@ -39,7 +39,6 @@ public class PostingMerger {
     }
 
     public void mergeFiles(File mergePath, boolean mergeFlag) {
-//        int mergeNum=0;
         File[] postingFiles = mergePath.listFiles();
         int counter = postingFiles.length;
         while (counter > 1) {
@@ -52,9 +51,8 @@ public class PostingMerger {
                     }
                 }
             }
-//            int postingFileSize = postingFiles.length;
             try {
-                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[/*postingFileSize - 1*/0].getCanonicalPath(), postingFiles[/*postingFileSize - 2*/1].getCanonicalPath()/*,mergeNum*/);
+                mergePostingFiles(mergePath.getCanonicalPath(), postingFiles[0].getCanonicalPath(), postingFiles[1].getCanonicalPath());
                 new File(postingFiles[0].getCanonicalPath()).delete();
                 new File(postingFiles[1].getCanonicalPath()).delete();
                 counter--;
@@ -65,12 +63,11 @@ public class PostingMerger {
         }
     }
 
-    private void mergePostingFiles(String mergePath, String firstPosting, String secondPosting/*, int mergeNum*/) {
+    private void mergePostingFiles(String mergePath, String firstPosting, String secondPosting) {
         try {
-//            int mergeNum=0;
             BufferedReader firstPostReader = new BufferedReader(new FileReader(firstPosting));
             BufferedReader secondPostReader = new BufferedReader(new FileReader(secondPosting));
-            BufferedWriter mergePostWriter = new BufferedWriter(new FileWriter(new File(mergePath + "\\" + mergeChar + mergeNum))); //Z" + mergeNum insted of mergeChar
+            BufferedWriter mergePostWriter = new BufferedWriter(new FileWriter(new File(mergePath + "\\" + mergeChar + mergeNum)));
             String firstPostLine = firstPostReader.readLine();
             String secondPostLine = secondPostReader.readLine();
             while (null != firstPostLine && null != secondPostLine) {

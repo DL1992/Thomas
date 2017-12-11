@@ -69,11 +69,11 @@ public class ReadFile {
         return stopWordsSet;
     }
 
-    public HashSet<String> createCacheSet(String path) {
+    public HashSet<String> createCacheSet() {
         HashSet<String> stopWordsSet = new HashSet<>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(path));
+            reader = new BufferedReader(new FileReader("cacheWords"));
             String cacheWord;
             while (null != (cacheWord = reader.readLine())) {
                 stopWordsSet.add(cacheWord);

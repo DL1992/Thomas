@@ -26,7 +26,7 @@ public class Cache {
         }
     }
 
-    public void loadTermDic(String path){
+    public void loadCache(String path){
         ObjectInputStream oisTermDic;
         try {
             oisTermDic = new ObjectInputStream(new FileInputStream(new File(path)));
