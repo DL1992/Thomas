@@ -12,14 +12,17 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
 
-        Cache c = new Cache();
-        c.loadTermDic("D:\\documents\\users\\laadan\\cache");
-        int a =0;
-//        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
-//        long startTime = System.currentTimeMillis();
-//        indexer.loadTermDic("D:\\documents\\users\\laadan\\dic");
-//        long dicTime = System.currentTimeMillis();
-//        System.out.println("time to load dic is: " + (dicTime-startTime));
+        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
+        long startTime = System.currentTimeMillis();
+        indexer.loadTermDic("D:\\documents\\users\\laadan\\dic");
+        long dicTime = System.currentTimeMillis();
+        System.out.println("time to load dic is: " + (dicTime-startTime));
+        indexer.createCache();
+
+//        Cache c = indexer.createCache();
+//        c.loadTermDic("D:\\documents\\users\\laadan\\cache");
+//        int a = 1;
+
 //        long cacheStartTime = System.currentTimeMillis();
 //        Cache cache = indexer.createCache();
 //        long cacheStoptime = System.currentTimeMillis();
@@ -38,6 +41,7 @@ public class Main {
 //        HashSet<String> stopWords = read.createStopWordsSet("D:\\documents\\users\\laadan\\stop_words.txt");
 ////        HashSet<String> stopWords = read.createStopWordsSet("C:\\School\\IR\\Search Engine\\stop_words.txt");
 //        Indexer indexer = new Indexer("D:\\documents\\users\\laadan");
+//
 ////        Indexer indexer = new Indexer("C:\\School\\IR\\Search Engine");
 //        IndexParser parse = new IndexParser(new Parse(), new Stemmer(), stopWords);
 ////        read.readFiles(new File("C:\\School\\IR\\Search Engine\\corpus"));
@@ -96,6 +100,7 @@ public class Main {
 //        stopTime = System.currentTimeMillis();
 //        elapsedTime = stopTime - startTime;
 //        System.out.println("total time: " + elapsedTime);
+//
 //
 //    }
 //

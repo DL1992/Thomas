@@ -168,7 +168,7 @@ public class PostingIO {
                 numTermInDocs = splitLine.length - 1;
                 termDfi = Math.log(numOfDoc / (float) numTermInDocs);
                 postingDic.put(splitLine[0], String.format("%s %s %s %s", canonicalPath, lineNum, numTermInDocs, termDfi));
-
+                lineNum++;
             }
             tempBuffReader.close();
         } catch (FileNotFoundException e) {

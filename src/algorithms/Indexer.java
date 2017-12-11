@@ -137,7 +137,7 @@ public class Indexer {
         }
     }
 
-    public Cache createCache() {
+    public void createCache() {
         Map<String,TermInfo> cache = new HashMap<>();
         PriorityQueue<Map.Entry<String, String>> pqTerms = new PriorityQueue<>(new Comparator<Map.Entry<String, String>>() {
             @Override
@@ -151,11 +151,18 @@ public class Indexer {
              termDic.entrySet()) {
             pqTerms.add(entry);
         }
-        for (int i = 0; i < 10000; i++) {
-            Map.Entry<String, String> term = pqTerms.remove();
-            cache.put(term.getKey(), getTermInfo(term.getKey()));
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(new File("D:\\documents\\users\\laadan\\cache")));
+            for (int i = 0; i < 10000; i++) {
+                Map.Entry<String, String> term = pqTerms.remove();
+                bw.write(term.getKey());
+                bw.write("\n");
+            }
+            bw.flush();
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return new Cache(cache);
-
     }
 }
