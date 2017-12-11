@@ -56,9 +56,14 @@ public class IndexParser {
         List<String> stemTokenList = new ArrayList<>();
         for (String termBeforeStem :
                 docParseContent) {
-            stemmer.add(termBeforeStem.toCharArray(), termBeforeStem.length());
-            stemmer.stem();
-            stemTokenList.add(stemmer.toString());
+            if(!termBeforeStem.contains(" ")){
+                stemmer.add(termBeforeStem.toCharArray(), termBeforeStem.length());
+                stemmer.stem();
+                stemTokenList.add(stemmer.toString());
+            }
+            else{
+                stemTokenList.add(termBeforeStem);
+            }
         }
         return stemTokenList;
     }

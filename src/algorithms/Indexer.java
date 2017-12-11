@@ -11,6 +11,8 @@ public class Indexer {
     private int numOfDocIndexd;
     private Map<String,String> termDic;
     private Map<String, StringBuilder> termMap;
+    private Map<String, String> cacheMap;
+    private Set<String> cacheWords;
     private Map<String, String> docMap;
     private PostingIO pIO;
     private PostingMerger pMerger;
@@ -20,11 +22,13 @@ public class Indexer {
         this.docMap = new HashMap<>();
     }
 
-    public Indexer(String postingPath) {
+    public Indexer(String postingPath, Set<String> cacheWords) {
         this.postingPath = postingPath;
         this.numOfDocIndexd = 0;
         this.termDic = null;
+        this.cacheWords = cacheWords;
         this.termMap = new HashMap<>();
+        this.cacheMap = new HashMap<>();
         this.docMap = new HashMap<>();
         this.pIO = new PostingIO(postingPath);
         this.pMerger = new PostingMerger();
@@ -77,14 +81,15 @@ public class Indexer {
                 }
                 termMap.get(term).append(docToIndex.getDocName() + " " + docToIndex.termInDocLoc2(term));
             }
-
         }
         docMap.put(docToIndex.getDocName(), docToIndex.getDocLength() + " " + docToIndex.getMostCommonTerm() + " " + docToIndex.getMostCommonTermTf());
         numOfDocIndexd++;
     }
 
     public void createFinalDic() {
-        this.termDic = pIO.createPostingDic(numOfDocIndexd);
+        List<Map<String, String>> finalDics = pIO.createPostingDic(numOfDocIndexd, cacheWords);
+        this.termDic = finalDics.get(0);
+        this.cacheMap = finalDics.get(1);
     }
 
     public TermInfo getTermInfo(String term){
@@ -137,7 +142,12 @@ public class Indexer {
         }
     }
 
-    public void createCache() {
+    public void createCache(){
+        pIO.createCache(this.cacheMap);
+    }
+
+
+    public void createCacheText() {
         Map<String,TermInfo> cache = new HashMap<>();
         PriorityQueue<Map.Entry<String, String>> pqTerms = new PriorityQueue<>(new Comparator<Map.Entry<String, String>>() {
             @Override

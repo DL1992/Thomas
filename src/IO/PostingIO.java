@@ -138,36 +138,45 @@ public class PostingIO {
         }
     }
 
-    public Map<String, String> createPostingDic(int numOfDoc) {
+    public List<Map<String, String>> createPostingDic(int numOfDoc, Set<String> cachewords) {
         Map<String, String> postingDic = new HashMap<>();
+        Map<String, String> cacheDic = new HashMap<>();
         File postingFile = new File(postingPath);
         for (File f :
                 postingFile.listFiles()) {
             if (f.isDirectory()) {
                 File[] tempPostingFile = f.listFiles();
                 try {
-                    addTermsFromPosting(numOfDoc, postingDic, tempPostingFile[0].getCanonicalPath());
+                    addTermsFromPosting(numOfDoc, postingDic,cacheDic,cachewords, tempPostingFile[0].getCanonicalPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-        return postingDic;
+        List<Map<String, String>> result = new ArrayList<>();
+        result.add(postingDic);
+        result.add(cacheDic);
+        return result;
     }
 
-    private void addTermsFromPosting(int numOfDoc, Map<String, String> postingDic, String canonicalPath) {
+    private void addTermsFromPosting(int numOfDoc, Map<String, String> postingDic,Map<String,String> cacheDic,Set<String> cacheWords, String canonicalPath) {
         try {
             BufferedReader tempBuffReader = new BufferedReader(new FileReader(canonicalPath));
             String line;
             int lineNum = 1;
             int numTermInDocs;
             double termDfi;
-
             while (null != (line = tempBuffReader.readLine())) {
                 String[] splitLine = line.split("\\*");
                 numTermInDocs = splitLine.length - 1;
-                termDfi = Math.log(numOfDoc / (float) numTermInDocs);
+                termDfi = Math.log10(numOfDoc / (float) numTermInDocs);
+                if(cacheWords.contains(splitLine[0])){
+                    cacheDic.put(splitLine[0],createCacheFromPost(splitLine));
+                    postingDic.put(splitLine[0], String.format("cache ^ %s %s",numTermInDocs, termDfi));
+                }
+                else{
                 postingDic.put(splitLine[0], String.format("%s %s %s %s", canonicalPath, lineNum, numTermInDocs, termDfi));
+                }
                 lineNum++;
             }
             tempBuffReader.close();
@@ -178,4 +187,39 @@ public class PostingIO {
         }
     }
 
+    private String createCacheFromPost(String[] splitLine) {
+        StringBuilder cacheString = new StringBuilder();
+        String[] sortSplitLine = splitLine;
+        Arrays.sort(sortSplitLine, 1, sortSplitLine.length, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                String[] splitFirst = o1.split(" ");
+                String[] splitSecond = o2.split(" ");
+                return Double.compare(Double.parseDouble(splitSecond[1]),Double.parseDouble(splitFirst[1]));
+            }
+        });
+        for (int i = 1; i < sortSplitLine.length/3; i++) {
+            cacheString.append(sortSplitLine[i] + "*");
+        }
+        return cacheString.toString();
+    }
+
+    public void createCache(Map<String, String> cacheMap) {
+        try {
+            BufferedWriter cacheWriter = new BufferedWriter(new FileWriter(new File("D:\\documents\\users\\laadan\\cacheFile")));
+            List<String> sortedKeyList = new ArrayList<>(cacheMap.keySet());
+            Collections.sort(sortedKeyList);
+            for (String term :
+                    sortedKeyList) {
+                    String st = term + "*";
+                    cacheWriter.write(st);
+                    st = cacheMap.get(term);
+                    cacheWriter.write(st);
+                    cacheWriter.write("\n");
+                    cacheWriter.flush();
+                }
+            } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
 }

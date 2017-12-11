@@ -37,21 +37,23 @@ public class Doc {
                 termsLocMap.get(parseContent.get(i)).append(i);
             } else {
                 termsLocMap.get(parseContent.get(i)).append(" " + i);
-                int repeatTimes = termsInDocNum.get(parseContent.get(i));
-                repeatTimes++;
-                if (repeatTimes > mostCommonTermTf) {
-                    mostCommonTermTf = repeatTimes;
-                    mostCommonTerm = parseContent.get(i);
-                }
-                termsInDocNum.put(parseContent.get(i), repeatTimes);
             }
+            int repeatTimes = termsInDocNum.get(parseContent.get(i));
+            repeatTimes++;
+            if (repeatTimes > mostCommonTermTf) {
+                mostCommonTermTf = repeatTimes;
+                mostCommonTerm = parseContent.get(i);
+            }
+            termsInDocNum.put(parseContent.get(i), repeatTimes);
         }
     }
 
     //TODO: rename after deleting termindocloc
     public String termInDocLoc2(String term) {
-        float Ntf = (termsInDocNum.get(term) / (float) mostCommonTermTf);
-        return String.format("%.2f %s %s*", Ntf, termsInDocNum.get(term), termsLocMap.get(term));
+        double Ntf = ((double)termsInDocNum.get(term) /  mostCommonTermTf);
+        if(Double.isInfinite(Ntf))
+            System.out.println(Ntf);
+        return String.format("%f %s %s*", Ntf, termsInDocNum.get(term), termsLocMap.get(term));
     }
 
     //TODO: delete this function. rename termindocloc2.

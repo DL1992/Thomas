@@ -69,6 +69,31 @@ public class ReadFile {
         return stopWordsSet;
     }
 
+    public HashSet<String> createCacheSet(String path) {
+        HashSet<String> stopWordsSet = new HashSet<>();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(path));
+            String cacheWord;
+            while (null != (cacheWord = reader.readLine())) {
+                stopWordsSet.add(cacheWord);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != reader)
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return stopWordsSet;
+    }
+
+
     public List<Doc> createDocs(String path) throws IOException {
         List<Doc> docList = new ArrayList<>();
         BufferedReader reader = null;

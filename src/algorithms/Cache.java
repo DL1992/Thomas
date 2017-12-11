@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Cache {
-    private Map<String,TermInfo> cacheMap;
+    private Map<String,String> cacheMap;
 
-    public Cache(Map<String, TermInfo> cacheMap) {
+    public Cache(Map<String, String> cacheMap) {
         this.cacheMap = cacheMap;
     }
 
@@ -30,7 +30,7 @@ public class Cache {
         ObjectInputStream oisTermDic;
         try {
             oisTermDic = new ObjectInputStream(new FileInputStream(new File(path)));
-            cacheMap=(HashMap<String,TermInfo>)oisTermDic.readObject();
+            cacheMap=(HashMap<String,String>)oisTermDic.readObject();
             oisTermDic.close();
         } catch (IOException e) {
             e.printStackTrace();
